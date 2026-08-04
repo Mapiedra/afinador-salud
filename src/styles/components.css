@@ -46,6 +46,11 @@ button {
   background: var(--oro-claro);
 }
 
+.boton-primario:disabled {
+  opacity: 0.55;
+  cursor: progress;
+}
+
 .boton-paso {
   width: 44px;
   height: 44px;

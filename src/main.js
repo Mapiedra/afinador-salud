@@ -130,7 +130,25 @@ const microfono = crearMicrofono({
   }
 })
 
-capaBoton.addEventListener('click', () => microfono.iniciar(true))
+// El boton debe dar respuesta SIEMPRE: si el intento falla sin cambiar de
+// estado, la capa no se repintaria sola y pareceria que no hace nada.
+capaBoton.addEventListener('click', async () => {
+  const mensaje = MENSAJES_CAPA[microfono.estado] ?? MENSAJES_CAPA.gesto
+  capaBoton.disabled = true
+  capaBoton.textContent = 'Activando…'
+
+  const listo = await microfono.iniciar(true)
+  capaBoton.disabled = false
+
+  if (listo) return
+
+  capaBoton.textContent = 'Reintentar'
+  capaTexto.textContent =
+    microfono.motivo === 'contexto-suspendido'
+      ? 'El navegador sigue bloqueando el audio. Vuelve a tocar; si no arranca, cierra la app y ábrela de nuevo.'
+      : (MENSAJES_CAPA[microfono.estado] ?? mensaje).texto
+})
+
 $('btn-escucha').addEventListener('click', () => microfono.alternar())
 
 // --- Wake lock ------------------------------------------------------------
