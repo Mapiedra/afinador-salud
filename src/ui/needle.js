@@ -66,21 +66,18 @@ export function crearArco(svg) {
   }
   svg.appendChild(marcas)
 
-  // Etiquetas de los extremos y del centro.
+  // Etiquetas cada 10 cents.
   const etiquetas = crear('g', { class: 'arco__etiquetas' })
-  for (const [c, texto, anclaje] of [
-    [-RANGO, '−50', 'start'],
-    [0, '0', 'middle'],
-    [RANGO, '+50', 'end']
-  ]) {
-    const p = punto(c, RADIO - 34)
+  for (let c = -RANGO; c <= RANGO; c += 10) {
+    const principal = c === 0 || Math.abs(c) === RANGO
+    const p = punto(c, RADIO - 33)
     const t = crear('text', {
-      class: 'arco__etiqueta',
+      class: principal ? 'arco__etiqueta arco__etiqueta--fuerte' : 'arco__etiqueta',
       x: p.x.toFixed(2),
-      y: (p.y + 5).toFixed(2),
-      'text-anchor': anclaje
+      y: (p.y + 4).toFixed(2),
+      'text-anchor': 'middle'
     })
-    t.textContent = texto
+    t.textContent = c === 0 ? '0' : `${c > 0 ? '+' : '−'}${Math.abs(c)}`
     etiquetas.appendChild(t)
   }
   svg.appendChild(etiquetas)

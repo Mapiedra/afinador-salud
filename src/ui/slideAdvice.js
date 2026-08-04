@@ -1,13 +1,15 @@
 /**
- * Tarjeta de consejo de bomba: dibujo del instrumento con la bomba desplazada
- * en la direccion correcta, mas el texto.
+ * Tarjeta de consejo de afinacion: dibujo del instrumento con su pieza movil
+ * desplazada en la direccion correcta, mas el texto.
  *
  * Cada SVG declara en su raiz un vector `--eje-x` / `--eje-y` que apunta hacia
- * donde ALARGA su bomba general. Aqui solo se fija `--desp`, positivo para
- * sacar y negativo para meter, y el CSS resuelve la direccion.
+ * donde ALARGA su pieza de afinacion: la bomba general en casi todos, y el
+ * tudel en la corneta espanola de llaves, que no lleva bomba. Aqui solo se
+ * fija `--desp`, positivo para sacar y negativo para meter, y el CSS resuelve
+ * la direccion.
  */
 
-import { consejoBomba } from '../music/instruments.js'
+import { consejoAjuste } from '../music/instruments.js'
 import { DIBUJOS } from './drawings.js'
 
 /** Recorrido del dibujo en unidades del viewBox, por magnitud de desviacion. */
@@ -20,6 +22,8 @@ export function crearConsejo({ contenedor, dibujo, titulo, detalle }) {
     if (instrumentoActual === instrumento.id) return
     instrumentoActual = instrumento.id
     dibujo.innerHTML = DIBUJOS[instrumento.id] ?? ''
+    // Decide el reparto de la tarjeta: dibujo arriba o dibujo al lado.
+    contenedor.dataset.orientacion = instrumento.orientacion
   }
 
   return {
@@ -29,7 +33,7 @@ export function crearConsejo({ contenedor, dibujo, titulo, detalle }) {
       contenedor.dataset.direccion = 'ninguna'
       contenedor.style.setProperty('--desp', '0px')
       titulo.textContent = mensaje
-      detalle.textContent = `Te diré si meter o sacar la bomba general. ${instrumento.ubicacionBomba}`
+      detalle.textContent = `Te diré si meter o sacar ${instrumento.pieza}. ${instrumento.ubicacion}`
     },
 
     /**
@@ -40,7 +44,7 @@ export function crearConsejo({ contenedor, dibujo, titulo, detalle }) {
     actualizar(instrumento, estado, magnitud) {
       pintarInstrumento(instrumento)
 
-      const { direccion, titulo: t, detalle: d } = consejoBomba(instrumento, estado, magnitud)
+      const { direccion, titulo: t, detalle: d } = consejoAjuste(instrumento, estado, magnitud)
       const recorrido = RECORRIDO[magnitud] ?? 0
       // Positivo alarga el tubo (sacar), negativo lo acorta (meter).
       const desplazamiento = direccion === 'sacar' ? recorrido : direccion === 'meter' ? -recorrido : 0

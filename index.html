@@ -56,18 +56,38 @@
         </button>
       </header>
 
-      <nav id="selector-instrumento" class="instrumentos" aria-label="Instrumento"></nav>
-
       <main class="panel">
-        <section class="nota" aria-live="polite">
-          <div class="nota__principal">
-            <span id="nota-principal" class="nota__nombre">—</span>
-            <span id="nota-octava" class="nota__octava"></span>
-            <span id="nota-tono" class="nota__tono">en Do</span>
+        <section class="datos">
+          <div class="dato">
+            <span id="lectura-hz" class="dato__valor">— Hz</span>
+            <span class="dato__etiqueta">detectado</span>
           </div>
-          <div id="nota-secundaria" class="nota__secundaria" hidden>
-            <span id="nota-secundaria-nombre" class="nota__secundaria-nombre">—</span>
-            <span id="nota-secundaria-tono" class="nota__secundaria-tono">en Si♭</span>
+          <button id="btn-escucha" class="estado-micro" type="button" aria-live="polite">
+            <span class="estado-micro__punto" aria-hidden="true"></span>
+            <span id="estado-micro-texto" class="estado-micro__texto">Iniciando…</span>
+          </button>
+          <div class="dato dato--fin">
+            <span id="lectura-a4" class="dato__valor">A4 440</span>
+            <span class="dato__etiqueta">referencia</span>
+          </div>
+        </section>
+
+        <section class="nota" aria-live="polite">
+          <div class="lecturas">
+            <div class="lectura" id="lectura-a">
+              <span class="lectura__tono" id="lectura-a-tono">Do</span>
+              <span class="lectura__valor">
+                <span class="lectura__nombre" id="lectura-a-nombre">—</span
+                ><span class="lectura__octava" id="lectura-a-octava"></span>
+              </span>
+            </div>
+            <div class="lectura" id="lectura-b" hidden>
+              <span class="lectura__tono" id="lectura-b-tono">Si♭</span>
+              <span class="lectura__valor">
+                <span class="lectura__nombre" id="lectura-b-nombre">—</span
+                ><span class="lectura__octava" id="lectura-b-octava"></span>
+              </span>
+            </div>
           </div>
         </section>
 
@@ -97,19 +117,11 @@
         </section>
       </main>
 
+      <nav id="selector-instrumento" class="instrumentos" aria-label="Instrumento"></nav>
+
       <footer class="pie">
-        <div class="pie__dato">
-          <span id="lectura-hz" class="pie__valor">— Hz</span>
-          <span class="pie__etiqueta">detectado</span>
-        </div>
-        <button id="btn-escucha" class="estado-micro" type="button" aria-live="polite">
-          <span class="estado-micro__punto" aria-hidden="true"></span>
-          <span id="estado-micro-texto" class="estado-micro__texto">Iniciando…</span>
-        </button>
-        <div class="pie__dato pie__dato--fin">
-          <span id="lectura-a4" class="pie__valor">A4 440</span>
-          <span class="pie__etiqueta">referencia</span>
-        </div>
+        <span id="pie-version" class="pie__version"></span>
+        <span class="pie__autor">Miguel A. Piedra</span>
       </footer>
 
       <!-- Salvaguarda: solo aparece si el navegador exige un gesto o deniega el micro -->
@@ -120,6 +132,11 @@
             Toca para empezar a afinar. El audio no sale nunca de tu dispositivo.
           </p>
           <button id="capa-boton" class="boton-primario" type="button">Activar</button>
+          <details id="capa-diagnostico" class="diagnostico">
+            <summary class="diagnostico__titulo">Diagnóstico</summary>
+            <pre id="capa-traza" class="diagnostico__traza"></pre>
+            <button id="capa-copiar" class="diagnostico__copiar" type="button">Copiar</button>
+          </details>
         </div>
       </div>
 

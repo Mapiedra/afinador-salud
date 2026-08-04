@@ -108,67 +108,87 @@ button {
   color: var(--oro);
 }
 
+/* Pantallas bajas: el selector ocupa dos filas y es de los bloques más altos.
+   Se compacta para que la tarjeta de consejo no se quede sin sitio. */
+@media (max-height: 700px) {
+  .chip-instrumento {
+    padding: 5px 4px;
+  }
+
+  .chip-instrumento__nombre {
+    font-size: 0.78rem;
+  }
+
+  .chip-instrumento__tono {
+    font-size: 0.6rem;
+  }
+}
+
 /* ---------- Nota ---------- */
 
 .nota {
   text-align: center;
 }
 
-.nota__principal {
+/* Las dos lecturas, con el mismo peso visual y separadas por una linea para
+   que se distinga de un vistazo cual es la de Do y cual la de Si♭. */
+.lecturas {
   display: flex;
-  align-items: baseline;
+  align-items: stretch;
   justify-content: center;
-  gap: 6px;
 }
 
-.nota__nombre {
-  font-size: clamp(3.2rem, 17vw, 4.6rem);
+.lectura {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 clamp(12px, 5vw, 26px);
+}
+
+.lectura + .lectura {
+  border-left: 1px solid var(--linea);
+}
+
+.lectura__tono {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--oro-tenue);
+  font-size: 0.72rem;
   font-weight: 700;
-  line-height: 0.95;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--oro-claro);
+}
+
+.lectura__valor {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.lectura__nombre {
+  /* Ancho fijo: sin esto la caja se encoge con «Si» y se ensancha con «Sol♭»,
+     y todo el bloque de notas -y con él lo que hay debajo- da un salto de casi
+     30 px cada vez que cambia la nota. En em para que siga a la tipografía. */
+  min-width: 2.1em;
+  text-align: center;
+  font-size: clamp(2.5rem, 13vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1;
   letter-spacing: -0.02em;
   color: var(--color-estado);
   transition: color var(--dur-normal) var(--curva);
+}
+
+.lectura__octava {
+  /* Reserva el hueco de la cifra aunque esté vacía, para que al quedarse sin
+     lectura el bloque no encoja. */
+  min-width: 0.62em;
+  font-size: clamp(0.9rem, 4vw, 1.2rem);
+  font-weight: 600;
+  color: var(--texto-tenue);
   font-variant-numeric: tabular-nums;
-}
-
-.nota__octava {
-  font-size: clamp(1.1rem, 5vw, 1.5rem);
-  font-weight: 600;
-  color: var(--texto-tenue);
-}
-
-.nota__tono {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--texto-tenue);
-  align-self: center;
-  margin-left: 4px;
-}
-
-.nota__secundaria {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 7px;
-  margin-top: 6px;
-  padding: 3px 12px;
-  border-radius: 999px;
-  background: var(--carbon);
-  border: 1px solid var(--linea);
-}
-
-.nota__secundaria-nombre {
-  font-size: 1rem;
-  font-weight: 650;
-  color: var(--texto-suave);
-}
-
-.nota__secundaria-tono {
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--texto-tenue);
 }
 
 /* ---------- Arco de afinación ---------- */
@@ -181,11 +201,13 @@ button {
   min-height: 0;
 }
 
+/* El arco aprovecha todo el ancho disponible. El tope en `vh` no muerde en
+   pantallas normales; solo en las bajas, donde el arco es el bloque más alto
+   y hay que sacarle sitio a la tarjeta de consejo. */
 .medidor__arco {
   width: 100%;
-  max-width: 300px;
+  max-width: min(100%, 44vh);
   height: auto;
-  max-height: 34vh;
 }
 
 .arco__pista {
@@ -215,8 +237,15 @@ button {
 .arco__etiqueta {
   fill: var(--texto-tenue);
   font-family: var(--fuente);
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.arco__etiqueta--fuerte {
+  fill: var(--texto-suave);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .arco__aguja {
@@ -260,28 +289,67 @@ button {
 .consejo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   padding: 10px 14px;
   border-radius: var(--radio-m);
   background: var(--carbon-alto);
   border: 1px solid var(--linea);
+  /* Es la fila elástica: tiene que poder encoger sin desbordar la pantalla. */
+  min-height: 0;
+  overflow: hidden;
 }
 
+/* Ancho fijo y alto libre: cada instrumento conserva su proporción, así que
+   uno horizontal como la trompeta llena el ancho y uno vertical como la tuba
+   aprovecha el alto. El dibujo nunca desborda porque se limita al alto de la
+   tarjeta, que es el sobrante de la pantalla. */
 .consejo__dibujo {
   flex: none;
-  width: clamp(112px, 32vw, 148px);
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+  width: clamp(124px, 42vw, 210px);
+  min-height: 0;
   color: var(--oro);
 }
 
 .consejo__dibujo svg {
   display: block;
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
 }
 
-/* La bomba se desplaza en la direccion en que ALARGA el tubo de ese
-   instrumento, declarada por --eje-x/--eje-y en la raiz de cada SVG. */
-.consejo__dibujo [data-bomba] {
+/* Instrumentos alargados: el dibujo arriba a todo lo ancho y el texto debajo.
+   Es donde más grande se ve una trompeta o un trombón.
+
+   Solo cuando hay alto de sobra: por debajo de 700 px de pantalla la tarjeta
+   se queda en unos 90 px y, apilado, el dibujo se aplastaba hasta desaparecer.
+   Ahí es mejor el reparto lado a lado. */
+@media (min-height: 700px) {
+  .consejo[data-orientacion='horizontal'] {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+
+  .consejo[data-orientacion='horizontal'] .consejo__dibujo {
+    width: 100%;
+    flex: 1 1 auto;
+    align-self: stretch;
+    min-height: 62px;
+  }
+
+  .consejo[data-orientacion='horizontal'] .consejo__texto {
+    flex: none;
+  }
+}
+
+/* La pieza de afinación —bomba general, o el tudel en la corneta— se desplaza
+   en la dirección en que ALARGA el tubo de ese instrumento, declarada por
+   --eje-x/--eje-y en la raíz de cada SVG. */
+.consejo__dibujo [data-ajuste] {
   color: var(--color-estado);
   transform: translate(
     calc(var(--desp, 0px) * var(--eje-x, 1)),
@@ -316,39 +384,40 @@ button {
 
 .consejo__titulo {
   margin: 0 0 2px;
-  font-size: 0.98rem;
+  font-size: clamp(0.86rem, 3.6vw, 1.05rem);
   font-weight: 700;
+  line-height: 1.25;
   color: var(--color-estado);
   transition: color var(--dur-normal) var(--curva);
 }
 
 .consejo__detalle {
   margin: 0;
-  font-size: 0.78rem;
+  font-size: clamp(0.7rem, 3vw, 0.82rem);
   line-height: 1.35;
   color: var(--texto-tenue);
 }
 
-/* ---------- Pie ---------- */
+/* ---------- Tira de lecturas ---------- */
 
-.pie__dato {
+.dato {
   display: flex;
   flex-direction: column;
   min-width: 74px;
 }
 
-.pie__dato--fin {
+.dato--fin {
   text-align: right;
 }
 
-.pie__valor {
+.dato__valor {
   font-size: 0.88rem;
   font-weight: 650;
   color: var(--texto-suave);
   font-variant-numeric: tabular-nums;
 }
 
-.pie__etiqueta {
+.dato__etiqueta {
   font-size: 0.63rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -430,6 +499,49 @@ button {
   font-size: 0.86rem;
   line-height: 1.45;
   color: var(--texto-suave);
+}
+
+/* ---------- Diagnóstico del arranque de audio ---------- */
+
+.diagnostico {
+  margin-top: 14px;
+  text-align: left;
+}
+
+.diagnostico__titulo {
+  cursor: pointer;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texto-tenue);
+  text-align: center;
+}
+
+.diagnostico__traza {
+  max-height: 190px;
+  margin: 10px 0 0;
+  padding: 10px;
+  overflow: auto;
+  border-radius: var(--radio-s);
+  background: var(--negro);
+  border: 1px solid var(--linea);
+  font-family: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Menlo, monospace;
+  font-size: 0.66rem;
+  line-height: 1.5;
+  color: var(--texto-suave);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.diagnostico__copiar {
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: var(--radio-s);
+  font-size: 0.74rem;
+  color: var(--texto-suave);
+  background: var(--carbon);
+  border: 1px solid var(--linea);
 }
 
 /* ---------- Hoja de ajustes ---------- */

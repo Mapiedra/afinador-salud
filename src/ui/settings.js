@@ -25,7 +25,12 @@ export function crearAjustes({ estado, elementos }) {
 
   abrir.addEventListener('click', () => {
     hoja.hidden = false
-    requestAnimationFrame(() => hoja.classList.add('hoja--visible'))
+    // Forzamos el reflow para que la transicion arranque desde el estado
+    // oculto. Con `requestAnimationFrame` bastaria casi siempre, pero si el
+    // navegador no esta componiendo fotogramas ese callback no llega y la
+    // hoja se quedaria fuera de pantalla, presente pero invisible.
+    void hoja.offsetHeight
+    hoja.classList.add('hoja--visible')
   })
 
   function cerrarHoja() {

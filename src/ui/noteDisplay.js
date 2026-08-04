@@ -1,26 +1,34 @@
 /**
  * Muestra la nota detectada en las lecturas del instrumento activo.
  *
- * La primera lectura del instrumento va en grande; la segunda, debajo y en
- * pequeno. La trompa solo tiene una, asi que la secundaria queda oculta.
+ * Las dos lecturas tienen el MISMO peso visual: mismo tamano de nota, una al
+ * lado de la otra y cada una con su tonalidad rotulada encima, para que no
+ * haya duda de cual es la de Do y cual la de Si♭. La trompa solo tiene una
+ * (Fa) y entonces la segunda no se pinta.
  */
 
 import { notaEscrita } from '../music/notes.js'
 
-export function crearDisplayNota(elementos) {
-  const { principal, octava, tono, secundaria, secundariaNombre, secundariaTono } = elementos
+const ETIQUETAS = { do: 'Do', sib: 'Si♭', fa: 'Fa' }
+
+export function crearDisplayNota(bloques) {
+  /** Pone una lectura en su bloque, o lo oculta si el instrumento no la usa. */
+  function pintar(bloque, tonalidad, nota) {
+    if (!tonalidad) {
+      bloque.raiz.hidden = true
+      return
+    }
+
+    bloque.raiz.hidden = false
+    bloque.tono.textContent = ETIQUETAS[tonalidad] ?? tonalidad
+    bloque.nombre.textContent = nota ? nota.nombre : '—'
+    bloque.octava.textContent = nota ? String(nota.octava) : ''
+  }
 
   return {
-    /** Sin lectura fiable: dejamos el hueco marcado pero conservamos el layout. */
+    /** Sin lectura fiable: se conservan las tonalidades y se vacian las notas. */
     limpiar(instrumento) {
-      principal.textContent = '—'
-      octava.textContent = ''
-      tono.textContent = etiquetaDe(instrumento.lecturas[0])
-      secundaria.hidden = instrumento.lecturas.length < 2
-      if (!secundaria.hidden) {
-        secundariaNombre.textContent = '—'
-        secundariaTono.textContent = etiquetaDe(instrumento.lecturas[1])
-      }
+      bloques.forEach((bloque, i) => pintar(bloque, instrumento.lecturas[i], null))
     },
 
     /**
@@ -28,25 +36,10 @@ export function crearDisplayNota(elementos) {
      * @param {object} instrumento
      */
     actualizar(midiReal, instrumento) {
-      const [primera, segunda] = instrumento.lecturas
-
-      const uno = notaEscrita(midiReal, primera)
-      principal.textContent = uno.nombre
-      octava.textContent = String(uno.octava)
-      tono.textContent = uno.etiqueta
-
-      if (segunda) {
-        const dos = notaEscrita(midiReal, segunda)
-        secundaria.hidden = false
-        secundariaNombre.textContent = `${dos.nombre}${dos.octava}`
-        secundariaTono.textContent = dos.etiqueta
-      } else {
-        secundaria.hidden = true
-      }
+      bloques.forEach((bloque, i) => {
+        const tonalidad = instrumento.lecturas[i]
+        pintar(bloque, tonalidad, tonalidad ? notaEscrita(midiReal, tonalidad) : null)
+      })
     }
   }
-}
-
-function etiquetaDe(tonalidad) {
-  return { do: 'en Do', sib: 'en Si♭', fa: 'en Fa' }[tonalidad] ?? ''
 }

@@ -1,37 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" class="dibujo" style="--eje-x: 1; --eje-y: 0" aria-hidden="true" focusable="false">
-  <!-- Boquilla -->
-  <path class="dibujo__pieza" d="M 8 42 L 22 46 L 22 54 L 8 58 Z" fill="currentColor" stroke="none" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" class="dibujo" style="--eje-x: -1; --eje-y: 0" aria-hidden="true" focusable="false">
+  <!-- Corneta espanola de llaves, en plano y de formas macizas: cuerpo,
+       tudel y campana, nada mas. Se afina extrayendo el tudel, que lleva
+       montada la boquilla, asi que ambos se mueven juntos. -->
 
-  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
-    <!-- Tudel, mas corto y conico que el de la trompeta -->
-    <path d="M 20 50 H 150" />
-    <path d="M 150 72 H 54" />
-    <path d="M 54 72 H 42 A 13 13 0 0 0 42 98 H 54" />
-    <path d="M 42 98 H 150" />
+  <!-- Campana -->
+  <path
+    class="dibujo__campana"
+    fill="currentColor"
+    d="M 112 54 C 152 50 178 38 208 10 C 219 27 221 66 212 104 C 184 92 156 80 128 70 C 122 66 116 60 112 54 Z"
+  />
+
+  <!-- Cuerpo: el bucle ovalado -->
+  <rect
+    class="dibujo__tubos"
+    x="34"
+    y="62"
+    width="118"
+    height="54"
+    rx="27"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="17"
+  />
+
+  <!-- Tudel con su boquilla: la pieza que se extrae para afinar -->
+  <g class="dibujo__ajuste" data-ajuste fill="currentColor">
+    <rect x="4" y="42" width="17" height="18" rx="5" />
+    <rect x="17" y="47" width="66" height="9" rx="4.5" />
   </g>
 
-  <!-- Campana: mas ancha y de flare mas rapido -->
-  <g class="dibujo__campana" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
-    <path d="M 150 90 C 176 87 182 66 220 54" />
-    <path d="M 150 106 C 176 109 182 130 220 142" />
-    <path d="M 220 54 A 8 44 0 0 0 220 142" />
-  </g>
-
-  <!-- Bomba general -->
-  <g class="dibujo__bomba" data-bomba fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
-    <path d="M 134 50 H 160 A 11 11 0 0 1 160 72 H 134" />
-  </g>
-
-  <!-- Pistones -->
-  <g class="dibujo__pistones" stroke="currentColor" stroke-width="5" stroke-linecap="round">
-    <rect x="71" y="42" width="15" height="48" rx="7" fill="var(--dibujo-fondo, #12100c)" />
-    <rect x="93" y="42" width="15" height="48" rx="7" fill="var(--dibujo-fondo, #12100c)" />
-    <rect x="115" y="42" width="15" height="48" rx="7" fill="var(--dibujo-fondo, #12100c)" />
-    <path d="M 78.5 42 V 32 M 100.5 42 V 32 M 122.5 42 V 32" fill="none" />
-  </g>
-
-  <g class="dibujo__flecha" data-flecha fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M 174 24 H 198" />
-    <path d="M 191 17 L 198 24 L 191 31" />
+  <!-- Flecha: dibujada en el sentido de SACAR; la UI la invierte para meter -->
+  <g
+    class="dibujo__flecha"
+    data-flecha
+    fill="none"
+    stroke="currentColor"
+    stroke-width="5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M 68 22 H 38" />
+    <path d="M 45 14 L 37 22 L 45 30" />
   </g>
 </svg>

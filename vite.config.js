@@ -1,5 +1,10 @@
+import { readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
+
+// La versión del pie sale de package.json, para que no haya dos sitios que
+// mantener sincronizados a mano.
+const paquete = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'))
 
 // Base path de GitHub Pages: https://mapiedra.github.io/afinador-salud/
 // Se puede sobreescribir con BASE_PATH=/ para probar en otro hosting o en local.
@@ -7,6 +12,9 @@ const base = process.env.BASE_PATH ?? '/afinador-salud/'
 
 export default defineConfig({
   base,
+  define: {
+    __VERSION__: JSON.stringify(paquete.version)
+  },
   build: {
     target: 'es2020',
     assetsInlineLimit: 0

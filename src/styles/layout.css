@@ -6,6 +6,15 @@
   box-sizing: border-box;
 }
 
+/* El atributo `hidden` debe ganar SIEMPRE.
+   La regla del navegador es `[hidden] { display: none }`, y cualquier
+   `display` que pongamos aqui la pisa por ser hoja de autor: sin este
+   `!important`, `.capa { display: grid }` dejaba la capa de permiso
+   permanentemente visible aunque el codigo la ocultara. */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
@@ -24,9 +33,11 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Orden: cabecera, panel, selector de instrumento y pie. El selector va abajo,
+   al alcance del pulgar y junto al estado del micrófono. */
 .app {
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto auto;
   gap: clamp(8px, 2vh, 16px);
   height: 100dvh;
   max-width: 520px;
@@ -77,19 +88,46 @@ body {
   gap: 8px;
 }
 
+/* La nota y el medidor se apilan arriba con su alto natural, y el consejo se
+   queda con TODO el sobrante. Al revés -que era como estaba- el texto del
+   consejo, que cambia de largo según el instrumento, empujaba al arco y le
+   movía la posición. `minmax(0, ...)` deja que la última fila encoja por
+   debajo de su contenido en pantallas cortas en lugar de desbordar. */
 .panel {
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  align-content: center;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
   gap: clamp(6px, 2vh, 18px);
   min-height: 0;
 }
 
-.pie {
+/* Tira de lecturas: Hz detectados, estado del micrófono y referencia. */
+.datos {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--linea);
+}
+
+/* Créditos. */
+.pie {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 6px;
   border-top: 1px solid var(--linea);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--texto-tenue);
+}
+
+.pie__version {
+  font-variant-numeric: tabular-nums;
+}
+
+.pie__autor::before {
+  content: '·';
+  margin-right: 8px;
 }

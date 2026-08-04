@@ -38,14 +38,14 @@ const app = $('app')
 const estado = crearEstado()
 
 const arco = crearArco($('arco'))
-const display = crearDisplayNota({
-  principal: $('nota-principal'),
-  octava: $('nota-octava'),
-  tono: $('nota-tono'),
-  secundaria: $('nota-secundaria'),
-  secundariaNombre: $('nota-secundaria-nombre'),
-  secundariaTono: $('nota-secundaria-tono')
-})
+const display = crearDisplayNota(
+  ['a', 'b'].map((clave) => ({
+    raiz: $(`lectura-${clave}`),
+    tono: $(`lectura-${clave}-tono`),
+    nombre: $(`lectura-${clave}-nombre`),
+    octava: $(`lectura-${clave}-octava`)
+  }))
+)
 const consejo = crearConsejo({
   contenedor: $('consejo'),
   dibujo: $('consejo-svg'),
@@ -74,6 +74,7 @@ const capa = $('capa-permiso')
 const capaTitulo = $('capa-titulo')
 const capaTexto = $('capa-texto')
 const capaBoton = $('capa-boton')
+const capaTraza = $('capa-traza')
 const estadoMicroTexto = $('estado-micro-texto')
 
 const MENSAJES_CAPA = {
@@ -121,6 +122,7 @@ const microfono = crearMicrofono({
       capaTexto.textContent = mensaje.texto
       capaBoton.textContent = mensaje.boton
       capa.hidden = false
+      pintarDiagnostico()
     } else {
       capa.hidden = true
     }
@@ -130,23 +132,69 @@ const microfono = crearMicrofono({
   }
 })
 
+const AYUDA_MOTIVO = {
+  'contexto-suspendido':
+    'El navegador sigue bloqueando el audio. Vuelve a tocar; si no arranca, cierra la app y ábrela de nuevo.',
+  'permiso-sin-respuesta':
+    'No llegó respuesta al permiso del micrófono. Acepta el diálogo del navegador y vuelve a tocar; si lo concediste desde el candado de la barra de direcciones, recarga la página.',
+  'resume-sin-respuesta':
+    'El navegador no ha devuelto el control del audio. Vuelve a tocar el botón.'
+}
+
+function pintarDiagnostico() {
+  const d = microfono.diagnostico
+  capaTraza.textContent = [
+    `estado: ${d.estado}${d.motivo ? ` (${d.motivo})` : ''}`,
+    `contexto: ${d.contexto}${d.frecuenciaMuestreo ? ` @ ${d.frecuenciaMuestreo} Hz` : ''}`,
+    `flujo activo: ${d.flujoActivo ? 'sí' : 'no'}`,
+    `pistas: ${d.pistas.length ? d.pistas.join(', ') : 'ninguna'}`,
+    `grafo montado: ${d.grafo ? 'sí' : 'no'}`,
+    '',
+    ...microfono.traza
+  ].join('\n')
+}
+
+/** Red de seguridad de la interfaz: el botón nunca se queda en «Activando…». */
+function conLimite(promesa, ms) {
+  return Promise.race([promesa, new Promise((listo) => setTimeout(() => listo(false), ms))])
+}
+
 // El boton debe dar respuesta SIEMPRE: si el intento falla sin cambiar de
 // estado, la capa no se repintaria sola y pareceria que no hace nada.
 capaBoton.addEventListener('click', async () => {
-  const mensaje = MENSAJES_CAPA[microfono.estado] ?? MENSAJES_CAPA.gesto
   capaBoton.disabled = true
   capaBoton.textContent = 'Activando…'
 
-  const listo = await microfono.iniciar(true)
-  capaBoton.disabled = false
+  let listo = false
+  try {
+    listo = await conLimite(microfono.iniciar(true), 15000)
+  } finally {
+    capaBoton.disabled = false
+    pintarDiagnostico()
+  }
 
-  if (listo) return
+  if (listo) {
+    // No basta con esperar al cambio de estado: si ya estabamos en
+    // 'escuchando', `fijarEstado` no dispara el aviso y la capa se quedaria
+    // puesta encima de la app.
+    capa.hidden = true
+    capaBoton.textContent = MENSAJES_CAPA.gesto.boton
+    return
+  }
 
   capaBoton.textContent = 'Reintentar'
   capaTexto.textContent =
-    microfono.motivo === 'contexto-suspendido'
-      ? 'El navegador sigue bloqueando el audio. Vuelve a tocar; si no arranca, cierra la app y ábrela de nuevo.'
-      : (MENSAJES_CAPA[microfono.estado] ?? mensaje).texto
+    AYUDA_MOTIVO[microfono.motivo] ??
+    (MENSAJES_CAPA[microfono.estado] ?? MENSAJES_CAPA.gesto).texto
+})
+
+$('capa-copiar').addEventListener('click', () => {
+  navigator.clipboard?.writeText(capaTraza.textContent).then(
+    () => {
+      $('capa-copiar').textContent = 'Copiado'
+    },
+    () => {}
+  )
 })
 
 $('btn-escucha').addEventListener('click', () => microfono.alternar())
@@ -294,6 +342,9 @@ estado.suscribir(({ a4, tolerancia }) => {
 lecturaA4.textContent = `A4 ${estado.ajustes.a4}`
 arco.fijarTolerancia(estado.ajustes.tolerancia)
 mostrarReposo()
+
+// `__VERSION__` lo sustituye Vite con la versión de package.json.
+$('pie-version').textContent = `v${__VERSION__}`
 
 requestAnimationFrame(bucle)
 

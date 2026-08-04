@@ -10,20 +10,34 @@
  */
 
 /**
- * `lecturas` va en orden: la primera se muestra en grande y el resto debajo.
- * La trompa es la unica que lleva una sola lectura.
+ * `lecturas` va en orden y todas se muestran con el mismo peso visual. La
+ * corneta (Do) y la trompa (Fa) llevan una sola; el resto, Do y Si♭.
  *
  * `rango` acota la busqueda de la fundamental y es el segundo cortafuegos
  * contra los saltos de octava que provocan los armonicos del metal.
+ *
+ * `pieza` es lo que el musico mueve para afinar, con su articulo, porque no
+ * todos usan bomba: la corneta espanola de llaves se afina extrayendo el
+ * tudel sobre el que monta la boquilla. Va como dato y no incrustado en los
+ * textos para que cada instrumento diga lo suyo.
+ *
+ * `orientacion` es la disposicion del instrumento y decide como se reparte la
+ * tarjeta de consejo: los alargados ('horizontal') llevan el dibujo arriba a
+ * todo lo ancho y el texto debajo, que es donde mas grande se ve; los que se
+ * sostienen de pie ('vertical') van con el dibujo a un lado y el texto al
+ * otro, aprovechando el alto.
  */
 export const INSTRUMENTOS = [
   {
     id: 'corneta',
     nombre: 'Corneta',
     abrev: 'Cor',
-    lecturas: ['sib', 'do'],
+    // La corneta espanola de llaves solo se lee en Do.
+    lecturas: ['do'],
     rango: { minHz: 160, maxHz: 1100 },
-    ubicacionBomba: 'En la curva trasera, saliendo del tudel.'
+    orientacion: 'horizontal',
+    pieza: 'el tudel',
+    ubicacion: 'Es el tubo sobre el que monta la boquilla: sale entero tirando de él.'
   },
   {
     id: 'trompeta',
@@ -31,15 +45,20 @@ export const INSTRUMENTOS = [
     abrev: 'Tpt',
     lecturas: ['sib', 'do'],
     rango: { minHz: 150, maxHz: 1200 },
-    ubicacionBomba: 'La U grande de la curva trasera.'
+    orientacion: 'horizontal',
+    pieza: 'la bomba general',
+    ubicacion: 'La U grande de la curva trasera.'
   },
   {
     id: 'trombon',
     nombre: 'Trombón',
     abrev: 'Tbn',
-    lecturas: ['do', 'sib'],
+    // El trombon de la banda se lee solo en Do.
+    lecturas: ['do'],
     rango: { minHz: 60, maxHz: 600 },
-    ubicacionBomba: 'En la culata, detrás de la campana.'
+    orientacion: 'horizontal',
+    pieza: 'la bomba general',
+    ubicacion: 'En la culata, detrás de la campana.'
   },
   {
     id: 'bombardino',
@@ -47,7 +66,9 @@ export const INSTRUMENTOS = [
     abrev: 'Bmb',
     lecturas: ['do', 'sib'],
     rango: { minHz: 55, maxHz: 600 },
-    ubicacionBomba: 'Junto al tudel, antes de los pistones.'
+    orientacion: 'vertical',
+    pieza: 'la bomba general',
+    ubicacion: 'Junto al tudel, antes de los pistones.'
   },
   {
     id: 'trompa',
@@ -55,7 +76,10 @@ export const INSTRUMENTOS = [
     abrev: 'Tpa',
     lecturas: ['fa'],
     rango: { minHz: 60, maxHz: 800 },
-    ubicacionBomba: 'La bomba general, en la parte alta del cuerpo.'
+    // Enrollada y con la campana al lado: su dibujo sale más ancho que alto.
+    orientacion: 'horizontal',
+    pieza: 'la bomba general',
+    ubicacion: 'En la parte alta del cuerpo.'
   },
   {
     id: 'tuba',
@@ -63,7 +87,9 @@ export const INSTRUMENTOS = [
     abrev: 'Tba',
     lecturas: ['do', 'sib'],
     rango: { minHz: 25, maxHz: 400 },
-    ubicacionBomba: 'La bomba general del cuerpo, de recorrido largo.'
+    orientacion: 'vertical',
+    pieza: 'la bomba general',
+    ubicacion: 'La del cuerpo, de recorrido largo.'
   }
 ]
 
@@ -77,38 +103,42 @@ export function buscarInstrumento(id) {
   )
 }
 
+/* Cortos a propósito: mientras se toca no se lee un párrafo, hace falta la
+   dirección y cuánto. La ubicación de la pieza se muestra solo en reposo. */
 const MATICES = {
-  poco: 'Muy poco, apenas unos milímetros.',
-  medio: 'Un ajuste moderado, aproximadamente medio centímetro.',
-  mucho: 'Bastante recorrido. Si aun así no entra, revisa embocadura, aire y temperatura del instrumento.'
+  poco: 'Muy poco, unos milímetros.',
+  medio: 'Un ajuste moderado.',
+  mucho: 'Bastante. Revisa también embocadura y temperatura.'
 }
 
 /**
- * Texto del consejo de bomba.
+ * Texto del consejo de afinacion.
  *
  * Regla fisica: mas tubo = mas grave. Si la nota sale ALTA hay que ALARGAR
- * (sacar la bomba); si sale BAJA hay que ACORTAR (meterla).
+ * (sacar la pieza); si sale BAJA hay que ACORTAR (meterla). Vale igual para
+ * una bomba general que para el tudel de la corneta.
  *
  * @param {object} instrumento  Entrada de INSTRUMENTOS.
  * @param {'afinado'|'alto'|'bajo'} estado
  * @param {'nada'|'poco'|'medio'|'mucho'} magnitud
  */
-export function consejoBomba(instrumento, estado, magnitud) {
+export function consejoAjuste(instrumento, estado, magnitud) {
+  const { pieza } = instrumento
+
   if (estado === 'afinado') {
     return {
       direccion: 'ninguna',
       titulo: 'Afinado',
-      detalle: 'Mantén la bomba general donde está.'
+      detalle: `Mantén ${pieza} donde está.`
     }
   }
 
   const direccion = estado === 'alto' ? 'sacar' : 'meter'
-  const titulo = estado === 'alto' ? 'Saca la bomba general' : 'Mete la bomba general'
-  const matiz = MATICES[magnitud] ?? ''
+  const titulo = estado === 'alto' ? `Saca ${pieza}` : `Mete ${pieza}`
 
   return {
     direccion,
     titulo,
-    detalle: `${matiz} ${instrumento.ubicacionBomba}`.trim()
+    detalle: MATICES[magnitud] ?? ''
   }
 }

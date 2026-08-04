@@ -1,36 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" class="dibujo" style="--eje-x: 0; --eje-y: -1" aria-hidden="true" focusable="false">
-  <!-- Boquilla -->
-  <path class="dibujo__pieza" d="M 6 42 L 20 44 L 19 52 L 5 52 Z" fill="currentColor" stroke="none" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="5 10 252 190" class="dibujo" style="--eje-x: 0; --eje-y: -1" aria-hidden="true" focusable="false">
+  <!-- Trompa en plano y de formas macizas: cuerpo enrollado a la izquierda,
+       campana amplia a la derecha y tudel saliendo por arriba.
+       La bomba general se extrae hacia arriba. -->
 
-  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
-    <!-- Tudel hacia el cuerpo -->
-    <path d="M 18 48 C 36 38 54 34 68 40" />
+  <!-- Campana -->
+  <path
+    class="dibujo__campana"
+    fill="currentColor"
+    d="M 148 152 C 152 118 162 84 176 58 C 210 64 240 104 252 150 C 214 164 180 162 148 152 Z"
+  />
+
+  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-linecap="round">
     <!-- Cuerpo enrollado -->
-    <circle cx="100" cy="76" r="42" />
-    <circle cx="100" cy="76" r="26" stroke-width="5" />
+    <circle cx="88" cy="118" r="68" stroke-width="16" />
+    <!-- Vuelta interior -->
+    <rect x="58" y="72" width="58" height="100" rx="29" stroke-width="11" />
+    <!-- Tudel -->
+    <path d="M 32 62 L 16 22" stroke-width="10" />
   </g>
 
-  <!-- Campana, amplia y hacia la derecha -->
-  <g class="dibujo__campana" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
-    <path d="M 142 62 C 172 56 184 40 222 28" />
-    <path d="M 142 92 C 172 98 184 116 222 128" />
-    <path d="M 222 28 A 9 50 0 0 0 222 128" />
-  </g>
+  <!-- Boquilla -->
+  <path
+    class="dibujo__pieza"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="10"
+    stroke-linecap="round"
+    opacity="0.5"
+    d="M 16 22 L 12 14"
+  />
 
-  <!-- Cilindros rotativos -->
-  <g class="dibujo__pistones" stroke="currentColor" stroke-width="4" fill="var(--dibujo-fondo, #12100c)">
-    <circle cx="80" cy="102" r="9" />
-    <circle cx="100" cy="108" r="9" />
-    <circle cx="120" cy="102" r="9" />
+  <!-- Bombas de los cilindros y sus llaves -->
+  <g class="dibujo__pistones" stroke="currentColor" stroke-width="8" stroke-linecap="round" fill="currentColor">
+    <path d="M 46 100 H 124" fill="none" />
+    <path d="M 46 118 H 124" fill="none" />
+    <path d="M 46 136 H 124" fill="none" />
+    <circle cx="46" cy="100" r="7" stroke="none" />
+    <circle cx="46" cy="118" r="7" stroke="none" />
+    <circle cx="46" cy="136" r="7" stroke="none" />
   </g>
 
   <!-- Bomba general, en la parte alta del cuerpo -->
-  <g class="dibujo__bomba" data-bomba fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
-    <path d="M 88 40 V 20 A 15 15 0 0 1 118 20 V 40" />
+  <g
+    class="dibujo__ajuste"
+    data-ajuste
+    fill="none"
+    stroke="currentColor"
+    stroke-width="12"
+    stroke-linecap="round"
+  >
+    <path d="M 74 52 V 32 A 14 14 0 0 1 102 32 V 52" />
   </g>
 
-  <g class="dibujo__flecha" data-flecha fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M 152 40 V 16" />
-    <path d="M 145 23 L 152 16 L 159 23" />
+  <!-- Flecha: dibujada en el sentido de SACAR; la UI la invierte para meter -->
+  <g
+    class="dibujo__flecha"
+    data-flecha
+    fill="none"
+    stroke="currentColor"
+    stroke-width="6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M 134 50 V 20" />
+    <path d="M 126 28 L 134 19 L 142 28" />
   </g>
 </svg>

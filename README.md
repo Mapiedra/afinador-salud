@@ -14,8 +14,10 @@ en tiempo de ejecución.
   No hay selector de tonalidad; lo decide el instrumento.
 - Muestra la desviación en **cents** y en **Hz** respecto a la nota ideal, con
   un margen de afinación de **±10 cents** por defecto (configurable a ±5 o ±15).
-- Indica gráficamente si hay que **meter o sacar la bomba general**, sobre un
-  dibujo del instrumento concreto, con la magnitud del ajuste.
+- Indica gráficamente si hay que **meter o sacar** la pieza de afinación, sobre
+  un dibujo del instrumento concreto y con la magnitud del ajuste. La pieza es
+  la **bomba general** en casi todos y **el tudel** en la corneta española de
+  llaves, que no lleva bomba.
 - Referencia de afinación **La4 = 440 Hz** por defecto, ajustable de 415 a 466.
 - El micrófono **arranca solo** al abrir la app, sin botón de inicio.
 

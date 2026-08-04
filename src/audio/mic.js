@@ -5,22 +5,37 @@
  * un gesto -Safari en iOS es el caso habitual- o el permiso esta denegado,
  * expone el estado correspondiente para que la UI muestre la capa de rescate.
  *
- * Dos cosas que hay que tratar con cuidado y que rompen los afinadores web:
+ * Tres cosas que hay que tratar con cuidado y que cuelgan los afinadores web:
  *
  *  1. `AudioContext.resume()` puede quedarse pendiente PARA SIEMPRE si se
  *     llama sin gesto del usuario (WebKit). Si se espera esa promesa sin mas,
- *     el arranque se cuelga y el boton de reintento deja de responder. Aqui se
- *     corre contra un limite de tiempo y despues se consulta `state`.
- *  2. El grafo se monta de forma atomica: si falla getUserMedia, se deshace lo
- *     construido para que el siguiente intento vuelva a pedir permiso de
- *     verdad, en lugar de darse por montado y quedarse mudo.
+ *     el arranque se cuelga y el boton de reintento deja de responder.
+ *  2. `getUserMedia` tampoco tiene por que responder nunca: mientras el
+ *     dialogo de permiso este abierto la promesa sigue pendiente, y si el
+ *     usuario lo ignora y concede el permiso mas tarde desde el panel del
+ *     candado, esa promesa original puede no resolverse jamas.
+ *  3. Un intento en curso no debe bloquear a uno provocado por un toque del
+ *     usuario. Si el primero esta encallado, el boton quedaria muerto.
+ *
+ * Por eso todo lo que espera al usuario o al navegador va contra un limite de
+ * tiempo, y despues se consulta el estado real en lugar de fiarse de la
+ * promesa.
  */
 
 /** Muestras por ventana. ~170 ms a 48 kHz: dos periodos del pedal de tuba. */
 export const TAMANO_VENTANA = 8192
 
 /** Margen para que `resume()` haga efecto antes de darlo por bloqueado. */
-const LIMITE_REANUDAR_MS = 1200
+const LIMITE_REANUDAR_MS = 1500
+
+/** Margen para que el usuario conteste al dialogo de permiso. */
+const LIMITE_PERMISO_MS = 12000
+
+/** Pasos de arranque que se conservan para el diagnostico. */
+const MAX_TRAZA = 16
+
+/** Estados en los que ya nos hemos rendido y procede reintentar solos. */
+const ESTADOS_RENDIDO = new Set(['gesto', 'denegado', 'error'])
 
 /**
  * Estados posibles:
@@ -32,14 +47,25 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
   let analizador = null
   let flujo = null
   let fuente = null
+  let peticionFlujo = null
   let ventana = new Float32Array(TAMANO_VENTANA)
   let estado = 'iniciando'
   let silenciadoPorUsuario = false
   let enCurso = null
+  let generacion = 0
   let ultimoMotivo = null
+
+  const traza = []
+  const t0 = performance.now()
+
+  function anotar(paso) {
+    traza.push(`+${Math.round(performance.now() - t0)}ms ${paso}`)
+    if (traza.length > MAX_TRAZA) traza.shift()
+  }
 
   function fijarEstado(nuevo, motivo = null) {
     ultimoMotivo = motivo
+    anotar(`estado: ${nuevo}${motivo ? ` (${motivo})` : ''}`)
     if (estado === nuevo) return
     estado = nuevo
     alCambiarEstado?.(nuevo, motivo)
@@ -51,36 +77,86 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
     )
   }
 
+  /** Corre `promesa` contra un limite de tiempo. Al vencer, lanza TimeoutError. */
+  function conTiempo(promesa, ms, etiqueta) {
+    let temporizador
+    const limite = new Promise((_, fallar) => {
+      temporizador = setTimeout(() => {
+        const error = new Error(etiqueta)
+        error.name = 'TimeoutError'
+        error.etiqueta = etiqueta
+        fallar(error)
+      }, ms)
+    })
+    return Promise.race([promesa, limite]).finally(() => clearTimeout(temporizador))
+  }
+
   function asegurarContexto() {
     if (contexto && contexto.state !== 'closed') return contexto
+
     const Contexto = window.AudioContext || window.webkitAudioContext
     contexto = new Contexto({ latencyHint: 'interactive' })
-    // Si el navegador suspende o reanuda por su cuenta, que la UI se entere.
+    anotar(`contexto creado (${contexto.state}, ${contexto.sampleRate} Hz)`)
+
+    // Si el navegador reanuda por su cuenta mas tarde, que la UI se entere.
     contexto.addEventListener?.('statechange', () => {
+      anotar(`contexto -> ${contexto.state}`)
       if (contexto.state === 'running' && analizador && !silenciadoPorUsuario) {
         fijarEstado('escuchando')
       }
     })
+
     return contexto
   }
 
-  async function asegurarFlujo() {
-    if (flujo?.active) return flujo
-    flujo = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        // Imprescindible: el procesado del navegador deforma la senal y
-        // arruina la precision en cents.
-        echoCancellation: false,
-        noiseSuppression: false,
-        autoGainControl: false,
-        channelCount: 1
-      },
-      video: false
-    })
-    // Flujo nuevo: hay que rehacer la entrada del grafo.
-    fuente?.disconnect()
-    fuente = null
-    return flujo
+  /**
+   * Peticion de permiso compartida: dos llamadas concurrentes reutilizan la
+   * misma promesa en lugar de abrir un segundo dialogo.
+   */
+  function pedirFlujo() {
+    if (peticionFlujo) return peticionFlujo
+
+    anotar('pidiendo permiso de microfono')
+    peticionFlujo = navigator.mediaDevices
+      .getUserMedia({
+        audio: {
+          // Imprescindible: el procesado del navegador deforma la senal y
+          // arruina la precision en cents.
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false,
+          channelCount: 1
+        },
+        video: false
+      })
+      .then((nuevo) => {
+        anotar('permiso concedido, flujo activo')
+        flujo = nuevo
+        // Flujo nuevo: hay que rehacer la entrada del grafo.
+        fuente?.disconnect()
+        fuente = null
+
+        // El usuario puede haber contestado al dialogo despues de que
+        // venciera nuestra espera. Solo entonces reintentamos solos, en vez de
+        // dejarlo mirando la capa de permiso. En el arranque normal el estado
+        // todavia es 'iniciando' y el intento en curso ya sigue su camino:
+        // reintentar ahi solo duplicaria el trabajo.
+        if (ESTADOS_RENDIDO.has(estado) && !silenciadoPorUsuario) {
+          anotar('permiso tardio: reintentando solo')
+          queueMicrotask(() => iniciar(false))
+        }
+
+        return nuevo
+      })
+      .catch((error) => {
+        anotar(`permiso fallido: ${error?.name ?? error}`)
+        throw error
+      })
+      .finally(() => {
+        peticionFlujo = null
+      })
+
+    return peticionFlujo
   }
 
   function conectar() {
@@ -104,14 +180,17 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
     }
 
     fuente.connect(analizador)
+    anotar('grafo conectado')
   }
 
+  /** Suelta el grafo y el flujo para que el siguiente intento empiece limpio. */
   function desmontar() {
     fuente?.disconnect()
     fuente = null
     analizador = null
     for (const pista of flujo?.getTracks() ?? []) pista.stop()
     flujo = null
+    anotar('grafo desmontado')
   }
 
   /**
@@ -119,13 +198,17 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
    * @returns {Promise<boolean>} si el contexto quedo realmente en marcha.
    */
   async function reanudar() {
-    if (!contexto || contexto.state === 'running') return contexto?.state === 'running'
+    if (!contexto) return false
+    if (contexto.state === 'running') return true
 
-    await Promise.race([
-      contexto.resume().catch(() => {}),
-      new Promise((listo) => setTimeout(listo, LIMITE_REANUDAR_MS))
-    ])
+    anotar(`reanudando desde ${contexto.state}`)
+    try {
+      await conTiempo(contexto.resume(), LIMITE_REANUDAR_MS, 'resume-sin-respuesta')
+    } catch (error) {
+      anotar(`resume: ${error?.name ?? error}`)
+    }
 
+    // `state` es la fuente de verdad, no la promesa.
     return contexto.state === 'running'
   }
 
@@ -141,24 +224,36 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
       return Promise.resolve(false)
     }
 
-    // Lo primero y de forma SINCRONA, para no perder la activacion del usuario:
-    // cualquier `await` previo haria que el navegador ya no considere que
-    // estamos dentro del gesto.
+    anotar(`iniciar(${porGesto ? 'gesto' : 'automatico'})`)
+
+    // Lo primero y de forma SINCRONA, para no perder la activacion del
+    // usuario: cualquier `await` previo haria que el navegador ya no considere
+    // que estamos dentro del gesto.
     if (porGesto) {
       silenciadoPorUsuario = false
-      asegurarContexto().resume?.().catch(() => {})
+      try {
+        asegurarContexto().resume?.()?.catch?.(() => {})
+      } catch (error) {
+        anotar(`resume sincrono fallido: ${error?.name ?? error}`)
+      }
     }
 
-    if (enCurso) return enCurso
+    // Un intento automatico encallado no puede secuestrar al del usuario.
+    if (enCurso && !porGesto) return enCurso
 
-    enCurso = (async () => {
+    const gen = ++generacion
+
+    const intento = (async () => {
       try {
         asegurarContexto()
-        await asegurarFlujo()
+
+        if (!flujo?.active) {
+          await conTiempo(pedirFlujo(), LIMITE_PERMISO_MS, 'permiso-sin-respuesta')
+        }
+
         conectar()
 
         if (!(await reanudar())) {
-          // El audio sigue bloqueado: hace falta un toque explicito.
           fijarEstado('gesto', 'contexto-suspendido')
           return false
         }
@@ -167,11 +262,19 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
         fijarEstado('escuchando')
         return true
       } catch (error) {
+        const nombre = error?.name ?? 'Error'
+
+        if (nombre === 'TimeoutError') {
+          // La peticion puede seguir viva: no tocamos el grafo, que si el
+          // usuario contesta tarde se recupera solo.
+          fijarEstado('gesto', error.etiqueta ?? 'sin-respuesta')
+          return false
+        }
+
         // Deshacemos lo montado para que el siguiente intento vuelva a pedir
         // permiso en lugar de darse por montado y quedarse mudo.
         desmontar()
 
-        const nombre = error?.name ?? 'Error'
         if (nombre === 'NotAllowedError' || nombre === 'SecurityError') {
           fijarEstado(porGesto ? 'denegado' : 'gesto', nombre)
         } else {
@@ -179,11 +282,12 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
         }
         return false
       } finally {
-        enCurso = null
+        if (gen === generacion) enCurso = null
       }
     })()
 
-    return enCurso
+    enCurso = intento
+    return intento
   }
 
   function silenciar() {
@@ -231,6 +335,21 @@ export function crearMicrofono({ alCambiarEstado } = {}) {
     /** Ultimo motivo de fallo, para poder mostrar algo concreto en la UI. */
     get motivo() {
       return ultimoMotivo
+    },
+    /** Traza de arranque, para el bloque de diagnostico de la capa. */
+    get traza() {
+      return [...traza]
+    },
+    get diagnostico() {
+      return {
+        estado,
+        motivo: ultimoMotivo,
+        contexto: contexto?.state ?? 'sin contexto',
+        frecuenciaMuestreo: contexto?.sampleRate ?? null,
+        flujoActivo: Boolean(flujo?.active),
+        pistas: flujo?.getAudioTracks?.().map((p) => `${p.label || 'sin nombre'}: ${p.readyState}`) ?? [],
+        grafo: Boolean(analizador && fuente)
+      }
     },
     get frecuenciaMuestreo() {
       return contexto?.sampleRate ?? 48000

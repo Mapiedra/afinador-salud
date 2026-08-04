@@ -1,6 +1,6 @@
 {
   "name": "afinador-salud",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Afinador offline para instrumentos de viento metal de la Banda La Salud",
   "type": "module",
   "private": true,

@@ -1,35 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" class="dibujo" style="--eje-x: -1; --eje-y: 0" aria-hidden="true" focusable="false">
-  <!-- Boquilla -->
-  <path class="dibujo__pieza" d="M 8 32 L 22 36 L 22 44 L 8 48 Z" fill="currentColor" stroke="none" />
-
-  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
-    <!-- Vara: tubo de ida -->
-    <path d="M 20 40 H 180" />
-    <!-- Codo de la vara -->
-    <path d="M 180 40 H 194 A 11 11 0 0 1 194 62 H 180" />
-    <!-- Vara: tubo de vuelta -->
-    <path d="M 194 62 H 52" />
-    <!-- Tubo de campana -->
-    <path d="M 52 94 H 170" />
-  </g>
-
-  <!-- Abrazadera de la vara -->
-  <path class="dibujo__pieza" d="M 92 40 V 62" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-1 13 245 118" class="dibujo" style="--eje-x: -1; --eje-y: 0" aria-hidden="true" focusable="false">
+  <!-- Trombon en plano y de formas macizas. La bomba general es la U de la
+       culata, a la izquierda: va dibujada la ultima para que se pinte por
+       encima de lo que toque y se tine con el color de estado. -->
 
   <!-- Campana -->
-  <g class="dibujo__campana" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
-    <path d="M 170 84 C 194 82 200 62 228 50" />
-    <path d="M 170 104 C 194 106 200 126 228 138" />
-    <path d="M 228 50 A 8 44 0 0 0 228 138" />
+  <path
+    class="dibujo__campana"
+    fill="currentColor"
+    d="M 166 78 C 190 74 208 64 230 46 C 240 68 242 104 234 126 C 210 112 188 102 166 98 Z"
+  />
+
+  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round">
+    <!-- Vara: tubo de ida -->
+    <path d="M 24 28 H 180" />
+    <!-- Codo de la vara -->
+    <path d="M 180 28 H 194 A 12 12 0 0 1 194 52 H 180" />
+    <!-- Vara: tubo de vuelta -->
+    <path d="M 194 52 H 66" />
+    <!-- Tubo de campana -->
+    <path d="M 44 88 H 168" />
   </g>
 
-  <!-- Bomba general: la U de la culata, detras de la campana -->
-  <g class="dibujo__bomba" data-bomba fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
-    <path d="M 64 62 H 40 A 16 16 0 0 0 40 94 H 64" />
+  <!-- Abrazaderas de la vara -->
+  <g class="dibujo__pieza" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" opacity="0.55">
+    <path d="M 92 28 V 52" />
+    <path d="M 142 28 V 52" />
   </g>
 
-  <g class="dibujo__flecha" data-flecha fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M 46 20 H 22" />
-    <path d="M 29 13 L 22 20 L 29 27" />
+  <!-- Boquilla -->
+  <path class="dibujo__pieza" fill="currentColor" d="M 4 18 L 24 24 L 24 33 L 4 39 Z" />
+
+  <!-- Bomba general: la U de la culata -->
+  <g
+    class="dibujo__ajuste"
+    data-ajuste
+    fill="none"
+    stroke="currentColor"
+    stroke-width="14"
+    stroke-linecap="round"
+  >
+    <path d="M 66 52 H 44 A 18 18 0 0 0 44 88 H 66" />
+  </g>
+
+  <!-- Flecha: dibujada en el sentido de SACAR; la UI la invierte para meter -->
+  <g
+    class="dibujo__flecha"
+    data-flecha
+    fill="none"
+    stroke="currentColor"
+    stroke-width="6"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M 48 114 H 14" />
+    <path d="M 22 106 L 13 114 L 22 122" />
   </g>
 </svg>
