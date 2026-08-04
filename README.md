@@ -64,12 +64,18 @@ fichero y volver a ejecutarlo.
 
 ## Despliegue
 
-Cada push a `main` publica en GitHub Pages vía `.github/workflows/deploy.yml`:
+> **Antes del primer despliegue, una sola vez:** en el repositorio, **Settings →
+> Pages → Build and deployment → Source: `GitHub Actions`**.
+>
+> Sin ese paso el workflow falla en `configure-pages` con
+> `Get Pages site failed … Error: Not Found`. No se puede automatizar: el
+> parámetro `enablement` de la action exige un token personal (PAT), y el
+> `GITHUB_TOKEN` del workflow no basta. Después de activarlo, relanzar el
+> workflow fallido con **Re-run jobs**.
+
+Hecho eso, cada push a `main` publica vía `.github/workflows/deploy.yml` en:
 
     https://mapiedra.github.io/afinador-salud/
-
-Requisito previo, una sola vez: en el repositorio, **Settings → Pages → Source:
-GitHub Actions**.
 
 El `base` de Vite está fijado a `/afinador-salud/`. Para desplegar en otra ruta
 o en un dominio propio, sobreescribir con la variable de entorno `BASE_PATH`.
