@@ -1,0 +1,541 @@
+/* ---------- Botones base ---------- */
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.boton-icono {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  color: var(--texto-suave);
+  background: var(--carbon);
+  border: 1px solid var(--linea);
+  transition: color var(--dur-rapida) var(--curva);
+}
+
+.boton-icono svg {
+  width: 21px;
+  height: 21px;
+}
+
+.boton-icono:hover,
+.boton-icono:focus-visible {
+  color: var(--oro);
+}
+
+.boton-primario {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radio-m);
+  font-weight: 650;
+  color: var(--negro);
+  background: var(--oro);
+  transition: background var(--dur-rapida) var(--curva);
+}
+
+.boton-primario:hover,
+.boton-primario:focus-visible {
+  background: var(--oro-claro);
+}
+
+.boton-paso {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radio-s);
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--texto);
+  background: var(--carbon-alto);
+  border: 1px solid var(--linea);
+}
+
+:focus-visible {
+  outline: 2px solid var(--oro);
+  outline-offset: 2px;
+}
+
+/* ---------- Selector de instrumento ---------- */
+
+.chip-instrumento {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 8px 6px;
+  border-radius: var(--radio-s);
+  background: var(--carbon);
+  border: 1px solid var(--linea);
+  text-align: center;
+  transition:
+    border-color var(--dur-rapida) var(--curva),
+    background var(--dur-rapida) var(--curva);
+}
+
+.chip-instrumento__nombre {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.chip-instrumento__tono {
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  color: var(--texto-tenue);
+}
+
+.chip-instrumento--activo {
+  background: var(--oro-tenue);
+  border-color: var(--oro);
+}
+
+.chip-instrumento--activo .chip-instrumento__nombre {
+  color: var(--oro-claro);
+}
+
+.chip-instrumento--activo .chip-instrumento__tono {
+  color: var(--oro);
+}
+
+/* ---------- Nota ---------- */
+
+.nota {
+  text-align: center;
+}
+
+.nota__principal {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+
+.nota__nombre {
+  font-size: clamp(3.2rem, 17vw, 4.6rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--color-estado);
+  transition: color var(--dur-normal) var(--curva);
+  font-variant-numeric: tabular-nums;
+}
+
+.nota__octava {
+  font-size: clamp(1.1rem, 5vw, 1.5rem);
+  font-weight: 600;
+  color: var(--texto-tenue);
+}
+
+.nota__tono {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--texto-tenue);
+  align-self: center;
+  margin-left: 4px;
+}
+
+.nota__secundaria {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: 6px;
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: var(--carbon);
+  border: 1px solid var(--linea);
+}
+
+.nota__secundaria-nombre {
+  font-size: 1rem;
+  font-weight: 650;
+  color: var(--texto-suave);
+}
+
+.nota__secundaria-tono {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--texto-tenue);
+}
+
+/* ---------- Arco de afinación ---------- */
+
+.medidor {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+  min-height: 0;
+}
+
+.medidor__arco {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  max-height: 34vh;
+}
+
+.arco__pista {
+  stroke: var(--linea);
+  stroke-width: 11;
+  stroke-linecap: round;
+}
+
+.arco__zona {
+  stroke: var(--afinado-tenue);
+  stroke-width: 11;
+  stroke-linecap: round;
+  transition: d var(--dur-normal) var(--curva);
+}
+
+.arco__marca {
+  stroke: var(--texto-tenue);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.arco__marca--fuerte {
+  stroke: var(--texto-suave);
+  stroke-width: 3;
+}
+
+.arco__etiqueta {
+  fill: var(--texto-tenue);
+  font-family: var(--fuente);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.arco__aguja {
+  transform-origin: 150px 150px;
+  transition: transform 90ms linear;
+}
+
+.arco__varilla {
+  stroke: var(--color-estado);
+  stroke-width: 6;
+  stroke-linecap: round;
+  transition: stroke var(--dur-normal) var(--curva);
+}
+
+.arco__eje {
+  fill: var(--color-estado);
+  transition: fill var(--dur-normal) var(--curva);
+}
+
+.medidor__cifras {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.medidor__cents {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-estado);
+  transition: color var(--dur-normal) var(--curva);
+}
+
+.medidor__delta {
+  font-size: 0.85rem;
+  color: var(--texto-tenue);
+}
+
+/* ---------- Consejo de bomba ---------- */
+
+.consejo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radio-m);
+  background: var(--carbon-alto);
+  border: 1px solid var(--linea);
+}
+
+.consejo__dibujo {
+  flex: none;
+  width: clamp(112px, 32vw, 148px);
+  color: var(--oro);
+}
+
+.consejo__dibujo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* La bomba se desplaza en la direccion en que ALARGA el tubo de ese
+   instrumento, declarada por --eje-x/--eje-y en la raiz de cada SVG. */
+.consejo__dibujo [data-bomba] {
+  color: var(--color-estado);
+  transform: translate(
+    calc(var(--desp, 0px) * var(--eje-x, 1)),
+    calc(var(--desp, 0px) * var(--eje-y, 0))
+  );
+  transition:
+    transform var(--dur-normal) var(--curva),
+    color var(--dur-normal) var(--curva);
+}
+
+.consejo__dibujo [data-flecha] {
+  color: var(--color-estado);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity var(--dur-normal) var(--curva);
+}
+
+.consejo[data-direccion='sacar'] .consejo__dibujo [data-flecha] {
+  opacity: 1;
+}
+
+/* Las flechas se dibujan en el sentido de sacar; media vuelta para meter. */
+.consejo[data-direccion='meter'] .consejo__dibujo [data-flecha] {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
+.consejo__texto {
+  min-width: 0;
+}
+
+.consejo__titulo {
+  margin: 0 0 2px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--color-estado);
+  transition: color var(--dur-normal) var(--curva);
+}
+
+.consejo__detalle {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--texto-tenue);
+}
+
+/* ---------- Pie ---------- */
+
+.pie__dato {
+  display: flex;
+  flex-direction: column;
+  min-width: 74px;
+}
+
+.pie__dato--fin {
+  text-align: right;
+}
+
+.pie__valor {
+  font-size: 0.88rem;
+  font-weight: 650;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}
+
+.pie__etiqueta {
+  font-size: 0.63rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--texto-tenue);
+}
+
+.estado-micro {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  background: var(--carbon);
+  border: 1px solid var(--linea);
+  font-size: 0.74rem;
+  color: var(--texto-suave);
+}
+
+.estado-micro__punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--inactivo);
+  transition: background var(--dur-rapida) var(--curva);
+}
+
+#app[data-microfono='escuchando'] .estado-micro__punto {
+  background: var(--afinado);
+  animation: latido 2s ease-in-out infinite;
+}
+
+#app[data-microfono='denegado'] .estado-micro__punto,
+#app[data-microfono='error'] .estado-micro__punto,
+#app[data-microfono='sin-soporte'] .estado-micro__punto {
+  background: var(--desviado);
+}
+
+@keyframes latido {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ---------- Capa de permiso ---------- */
+
+.capa {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 4, 5, 0.88);
+  backdrop-filter: blur(6px);
+  z-index: 20;
+}
+
+.capa__caja {
+  width: 100%;
+  max-width: 340px;
+  padding: 22px;
+  border-radius: var(--radio-l);
+  background: var(--carbon-alto);
+  border: 1px solid var(--linea);
+  text-align: center;
+}
+
+.capa__titulo {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: var(--oro);
+}
+
+.capa__texto {
+  margin: 0 0 18px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--texto-suave);
+}
+
+/* ---------- Hoja de ajustes ---------- */
+
+.hoja {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+}
+
+.hoja__fondo {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 4, 5, 0.7);
+  opacity: 0;
+  transition: opacity var(--dur-normal) var(--curva);
+}
+
+.hoja__caja {
+  position: absolute;
+  inset: auto 0 0;
+  max-width: 520px;
+  margin-inline: auto;
+  padding: 10px 20px calc(22px + env(safe-area-inset-bottom));
+  border-radius: var(--radio-l) var(--radio-l) 0 0;
+  background: var(--carbon-alto);
+  border-top: 1px solid var(--linea);
+  transform: translateY(100%);
+  transition: transform var(--dur-normal) var(--curva);
+}
+
+.hoja--visible .hoja__fondo {
+  opacity: 1;
+}
+
+.hoja--visible .hoja__caja {
+  transform: translateY(0);
+}
+
+.hoja__asa {
+  width: 40px;
+  height: 4px;
+  margin: 0 auto 14px;
+  border-radius: 999px;
+  background: var(--linea);
+}
+
+.hoja__titulo {
+  margin: 0 0 18px;
+  font-size: 1.05rem;
+  color: var(--oro);
+}
+
+.ajuste {
+  margin-bottom: 22px;
+}
+
+.ajuste__etiqueta {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+}
+
+.ajuste__stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.ajuste__valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--oro);
+  font-variant-numeric: tabular-nums;
+}
+
+.ajuste__rango {
+  width: 100%;
+  accent-color: var(--oro);
+}
+
+.ajuste__pista {
+  margin: 8px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--texto-tenue);
+}
+
+.ajuste__grupo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.chip-tol {
+  padding: 11px 6px;
+  border-radius: var(--radio-s);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  background: var(--carbon);
+  border: 1px solid var(--linea);
+  font-variant-numeric: tabular-nums;
+}
+
+.chip-tol--activo {
+  color: var(--oro-claro);
+  background: var(--oro-tenue);
+  border-color: var(--oro);
+}

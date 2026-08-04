@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" class="dibujo" style="--eje-x: -1; --eje-y: 0" aria-hidden="true" focusable="false">
+  <!-- Boquilla -->
+  <path class="dibujo__pieza" d="M 8 20 L 24 24 L 24 34 L 8 38 Z" fill="currentColor" stroke="none" />
+
+  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+    <!-- Tudel -->
+    <path d="M 22 28 C 42 26 56 34 62 48" />
+    <!-- Salida de la bomba hacia los pistones -->
+    <path d="M 56 86 H 96" />
+    <!-- Codo inferior del cuerpo -->
+    <path d="M 96 110 V 124 H 176" />
+  </g>
+
+  <!-- Campana muy amplia hacia arriba -->
+  <g class="dibujo__campana" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+    <path d="M 166 124 C 158 78 160 44 144 16" />
+    <path d="M 192 124 C 206 78 214 44 236 16" />
+    <path d="M 144 16 A 46 9 0 0 0 236 16" />
+  </g>
+
+  <!-- Bomba general: recorrido largo -->
+  <g class="dibujo__bomba" data-bomba fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
+    <path d="M 68 48 H 38 A 19 19 0 0 0 38 86 H 68" />
+  </g>
+
+  <!-- Cuatro pistones -->
+  <g class="dibujo__pistones" stroke="currentColor" stroke-width="5" stroke-linecap="round">
+    <rect x="89" y="52" width="14" height="58" rx="7" fill="var(--dibujo-fondo, #12100c)" />
+    <rect x="108" y="52" width="14" height="58" rx="7" fill="var(--dibujo-fondo, #12100c)" />
+    <rect x="127" y="52" width="14" height="58" rx="7" fill="var(--dibujo-fondo, #12100c)" />
+    <rect x="146" y="52" width="14" height="58" rx="7" fill="var(--dibujo-fondo, #12100c)" />
+    <path d="M 96 52 V 42 M 115 52 V 42 M 134 52 V 42 M 153 52 V 42" fill="none" />
+  </g>
+
+  <g class="dibujo__flecha" data-flecha fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 40 116 H 16" />
+    <path d="M 23 109 L 16 116 L 23 123" />
+  </g>
+</svg>

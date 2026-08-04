@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0A0A0A" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="Afinador para instrumentos de viento metal de la Banda La Salud. Funciona sin conexión."
+    />
+
+    <!-- iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Afinador" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="icons/icon-192.png" />
+
+    <title>Afinador Banda La Salud</title>
+  </head>
+  <body>
+    <div id="app" class="app" data-estado="inactivo">
+      <header class="cabecera">
+        <img class="cabecera__logo" src="logoLaSalud.png" alt="Banda La Salud" width="40" height="40" />
+        <h1 class="cabecera__titulo">
+          <span class="cabecera__titulo-fino">Afinador</span>
+          <span class="cabecera__titulo-fuerte">Banda La Salud</span>
+        </h1>
+        <button
+          id="btn-ajustes"
+          class="boton-icono"
+          type="button"
+          aria-label="Ajustes"
+          aria-haspopup="dialog"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            />
+            <path
+              d="M19.4 13a7.7 7.7 0 0 0 0-2l2-1.5-2-3.4-2.3 1a7.7 7.7 0 0 0-1.7-1L15 3.5H9l-.4 2.6a7.7 7.7 0 0 0-1.7 1l-2.3-1-2 3.4L4.6 11a7.7 7.7 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7.7 7.7 0 0 0 1.7 1l.4 2.6h6l.4-2.6a7.7 7.7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.5Z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </header>
+
+      <nav id="selector-instrumento" class="instrumentos" aria-label="Instrumento"></nav>
+
+      <main class="panel">
+        <section class="nota" aria-live="polite">
+          <div class="nota__principal">
+            <span id="nota-principal" class="nota__nombre">—</span>
+            <span id="nota-octava" class="nota__octava"></span>
+            <span id="nota-tono" class="nota__tono">en Do</span>
+          </div>
+          <div id="nota-secundaria" class="nota__secundaria" hidden>
+            <span id="nota-secundaria-nombre" class="nota__secundaria-nombre">—</span>
+            <span id="nota-secundaria-tono" class="nota__secundaria-tono">en Si♭</span>
+          </div>
+        </section>
+
+        <section class="medidor" aria-label="Desviación en cents">
+          <svg
+            id="arco"
+            class="medidor__arco"
+            viewBox="0 0 300 168"
+            role="img"
+            aria-hidden="true"
+            focusable="false"
+          ></svg>
+          <div class="medidor__cifras">
+            <span id="cifra-cents" class="medidor__cents">—</span>
+            <span id="cifra-hz" class="medidor__delta">Δ — Hz</span>
+          </div>
+        </section>
+
+        <section id="consejo" class="consejo" aria-live="polite">
+          <div id="consejo-svg" class="consejo__dibujo"></div>
+          <div class="consejo__texto">
+            <p id="consejo-titulo" class="consejo__titulo">Toca una nota</p>
+            <p id="consejo-detalle" class="consejo__detalle">
+              El afinador te dirá si meter o sacar la bomba general.
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <footer class="pie">
+        <div class="pie__dato">
+          <span id="lectura-hz" class="pie__valor">— Hz</span>
+          <span class="pie__etiqueta">detectado</span>
+        </div>
+        <button id="btn-escucha" class="estado-micro" type="button" aria-live="polite">
+          <span class="estado-micro__punto" aria-hidden="true"></span>
+          <span id="estado-micro-texto" class="estado-micro__texto">Iniciando…</span>
+        </button>
+        <div class="pie__dato pie__dato--fin">
+          <span id="lectura-a4" class="pie__valor">A4 440</span>
+          <span class="pie__etiqueta">referencia</span>
+        </div>
+      </footer>
+
+      <!-- Salvaguarda: solo aparece si el navegador exige un gesto o deniega el micro -->
+      <div id="capa-permiso" class="capa" hidden>
+        <div class="capa__caja" role="dialog" aria-modal="true" aria-labelledby="capa-titulo">
+          <h2 id="capa-titulo" class="capa__titulo">Activar micrófono</h2>
+          <p id="capa-texto" class="capa__texto">
+            Toca para empezar a afinar. El audio no sale nunca de tu dispositivo.
+          </p>
+          <button id="capa-boton" class="boton-primario" type="button">Activar</button>
+        </div>
+      </div>
+
+      <div id="hoja-ajustes" class="hoja" hidden>
+        <div class="hoja__fondo" data-cerrar-ajustes></div>
+        <div class="hoja__caja" role="dialog" aria-modal="true" aria-labelledby="ajustes-titulo">
+          <div class="hoja__asa" aria-hidden="true"></div>
+          <h2 id="ajustes-titulo" class="hoja__titulo">Ajustes</h2>
+
+          <div class="ajuste">
+            <label class="ajuste__etiqueta" for="input-a4">Frecuencia de referencia (La4)</label>
+            <div class="ajuste__stepper">
+              <button id="a4-menos" class="boton-paso" type="button" aria-label="Bajar referencia">
+                −
+              </button>
+              <output id="salida-a4" class="ajuste__valor" for="input-a4">440 Hz</output>
+              <button id="a4-mas" class="boton-paso" type="button" aria-label="Subir referencia">
+                +
+              </button>
+            </div>
+            <input
+              id="input-a4"
+              class="ajuste__rango"
+              type="range"
+              min="415"
+              max="466"
+              step="1"
+              value="440"
+            />
+            <p class="ajuste__pista">Estándar 440 Hz. Sube a 442 si la banda afina más alto.</p>
+          </div>
+
+          <div class="ajuste">
+            <span class="ajuste__etiqueta">Margen de afinación</span>
+            <div id="grupo-tolerancia" class="ajuste__grupo" role="radiogroup" aria-label="Margen">
+              <button class="chip-tol" type="button" role="radio" data-tol="5">± 5</button>
+              <button class="chip-tol" type="button" role="radio" data-tol="10">± 10</button>
+              <button class="chip-tol" type="button" role="radio" data-tol="15">± 15</button>
+            </div>
+            <p class="ajuste__pista">Cents dentro de los que se considera la nota afinada.</p>
+          </div>
+
+          <button id="cerrar-ajustes" class="boton-primario" type="button">Listo</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

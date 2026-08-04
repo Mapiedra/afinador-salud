@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" class="dibujo" style="--eje-x: 1; --eje-y: 0" aria-hidden="true" focusable="false">
+  <!-- Boquilla -->
+  <path class="dibujo__pieza" d="M 8 40 L 22 44 L 22 52 L 8 56 Z" fill="currentColor" stroke="none" />
+
+  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+    <!-- Tudel -->
+    <path d="M 20 48 H 168" />
+    <!-- Tubo intermedio -->
+    <path d="M 168 70 H 58" />
+    <!-- Codo trasero -->
+    <path d="M 58 70 H 46 A 14 14 0 0 0 46 98 H 58" />
+    <!-- Tubo de campana -->
+    <path d="M 46 98 H 176" />
+  </g>
+
+  <!-- Campana -->
+  <g class="dibujo__campana" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+    <path d="M 176 90 C 198 89 204 76 226 66" />
+    <path d="M 176 106 C 198 107 204 120 226 130" />
+    <path d="M 226 66 A 7 32 0 0 0 226 130" />
+  </g>
+
+  <!-- Bomba general: la U del frente -->
+  <g class="dibujo__bomba" data-bomba fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
+    <path d="M 150 48 H 178 A 11 11 0 0 1 178 70 H 150" />
+  </g>
+
+  <!-- Pistones -->
+  <g class="dibujo__pistones" stroke="currentColor" stroke-width="5" stroke-linecap="round">
+    <rect x="77" y="40" width="15" height="48" rx="7" fill="var(--dibujo-fondo, #12100c)" />
+    <rect x="99" y="40" width="15" height="48" rx="7" fill="var(--dibujo-fondo, #12100c)" />
+    <rect x="121" y="40" width="15" height="48" rx="7" fill="var(--dibujo-fondo, #12100c)" />
+    <path d="M 84.5 40 V 30 M 106.5 40 V 30 M 128.5 40 V 30" fill="none" />
+  </g>
+
+  <!-- Flecha: dibujada en el sentido de SACAR; la UI la invierte para meter -->
+  <g class="dibujo__flecha" data-flecha fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 190 24 H 214" />
+    <path d="M 207 17 L 214 24 L 207 31" />
+  </g>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 140" class="dibujo" style="--eje-x: 0; --eje-y: -1" aria-hidden="true" focusable="false">
+  <!-- Boquilla -->
+  <path class="dibujo__pieza" d="M 6 42 L 20 44 L 19 52 L 5 52 Z" fill="currentColor" stroke="none" />
+
+  <g class="dibujo__tubos" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round">
+    <!-- Tudel hacia el cuerpo -->
+    <path d="M 18 48 C 36 38 54 34 68 40" />
+    <!-- Cuerpo enrollado -->
+    <circle cx="100" cy="76" r="42" />
+    <circle cx="100" cy="76" r="26" stroke-width="5" />
+  </g>
+
+  <!-- Campana, amplia y hacia la derecha -->
+  <g class="dibujo__campana" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+    <path d="M 142 62 C 172 56 184 40 222 28" />
+    <path d="M 142 92 C 172 98 184 116 222 128" />
+    <path d="M 222 28 A 9 50 0 0 0 222 128" />
+  </g>
+
+  <!-- Cilindros rotativos -->
+  <g class="dibujo__pistones" stroke="currentColor" stroke-width="4" fill="var(--dibujo-fondo, #12100c)">
+    <circle cx="80" cy="102" r="9" />
+    <circle cx="100" cy="108" r="9" />
+    <circle cx="120" cy="102" r="9" />
+  </g>
+
+  <!-- Bomba general, en la parte alta del cuerpo -->
+  <g class="dibujo__bomba" data-bomba fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round">
+    <path d="M 88 40 V 20 A 15 15 0 0 1 118 20 V 40" />
+  </g>
+
+  <g class="dibujo__flecha" data-flecha fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 152 40 V 16" />
+    <path d="M 145 23 L 152 16 L 159 23" />
+  </g>
+</svg>
