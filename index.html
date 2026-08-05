@@ -22,6 +22,26 @@
     <link rel="icon" type="image/png" href="icons/icon-192.png" />
 
     <title>Afinador Banda La Salud</title>
+
+    <script>
+      // Se captura aqui, antes que el resto del JS: Chrome dispara
+      // `beforeinstallprompt` una sola vez y muy pronto, a veces antes de que
+      // cargue el modulo principal. Si nadie lo recoge se pierde, y si nadie
+      // llama a preventDefault() Chrome ensena su propia barrita, que ademas
+      // deja de mostrar durante meses en cuanto el usuario la descarta una vez.
+      window.__instalacion = { evento: null, instalada: false, msEvento: null }
+      addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault()
+        window.__instalacion.evento = e
+        window.__instalacion.msEvento = Math.round(performance.now())
+        dispatchEvent(new Event('instalacion:disponible'))
+      })
+      addEventListener('appinstalled', function () {
+        window.__instalacion.instalada = true
+        window.__instalacion.evento = null
+        dispatchEvent(new Event('instalacion:instalada'))
+      })
+    </script>
   </head>
   <body>
     <div id="app" class="app" data-estado="inactivo">
@@ -31,6 +51,31 @@
           <span class="cabecera__titulo-fino">Afinador</span>
           <span class="cabecera__titulo-fuerte">Banda La Salud</span>
         </h1>
+        <button
+          id="btn-instalar"
+          class="boton-icono boton-icono--destacado"
+          type="button"
+          aria-label="Instalar en el dispositivo"
+          hidden
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path
+              d="M12 3v11m0 0 4-4m-4 4-4-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.9"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
         <button
           id="btn-ajustes"
           class="boton-icono"
@@ -140,6 +185,30 @@
         </div>
       </div>
 
+      <!-- iOS no dispara beforeinstallprompt: ahí se instala a mano -->
+      <div id="capa-instalar" class="capa" hidden>
+        <div class="capa__caja" role="dialog" aria-modal="true" aria-labelledby="instalar-titulo">
+          <h2 id="instalar-titulo" class="capa__titulo">Añadir a la pantalla de inicio</h2>
+          <p class="capa__texto">
+            Así tendrás el afinador como una app más, a pantalla completa y sin conexión.
+          </p>
+          <ol id="pasos-ios" class="pasos" hidden>
+            <li>Abre este sitio en <strong>Safari</strong>.</li>
+            <li>Toca el botón <strong>Compartir</strong>, el cuadrado con la flecha hacia arriba.</li>
+            <li>Baja y elige <strong>Añadir a pantalla de inicio</strong>.</li>
+          </ol>
+          <ol id="pasos-navegador" class="pasos" hidden>
+            <li>Abre el menú del navegador, el botón de los <strong>tres puntos</strong>.</li>
+            <li>
+              Busca <strong>Instalar aplicación</strong> o
+              <strong>Añadir a la pantalla de inicio</strong>.
+            </li>
+            <li>En ordenador, mira también el icono de instalar en la barra de direcciones.</li>
+          </ol>
+          <button id="instalar-cerrar" class="boton-primario" type="button">Entendido</button>
+        </div>
+      </div>
+
       <div id="hoja-ajustes" class="hoja" hidden>
         <div class="hoja__fondo" data-cerrar-ajustes></div>
         <div class="hoja__caja" role="dialog" aria-modal="true" aria-labelledby="ajustes-titulo">
@@ -177,6 +246,18 @@
               <button class="chip-tol" type="button" role="radio" data-tol="15">± 15</button>
             </div>
             <p class="ajuste__pista">Cents dentro de los que se considera la nota afinada.</p>
+          </div>
+
+          <div class="ajuste">
+            <span class="ajuste__etiqueta">Instalación</span>
+            <p id="instalacion-estado" class="ajuste__pista"></p>
+            <details class="diagnostico">
+              <summary class="diagnostico__titulo">Diagnóstico</summary>
+              <pre id="instalacion-traza" class="diagnostico__traza"></pre>
+              <button id="instalacion-copiar" class="diagnostico__copiar" type="button">
+                Copiar
+              </button>
+            </details>
           </div>
 
           <button id="cerrar-ajustes" class="boton-primario" type="button">Listo</button>

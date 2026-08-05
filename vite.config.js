@@ -32,8 +32,12 @@ export default defineConfig({
           'Afinador para instrumentos de viento metal: corneta, trompeta, trombón, bombardino, trompa y tuba. Funciona sin conexión.',
         lang: 'es',
         dir: 'ltr',
-        start_url: '.',
-        scope: '.',
+        // Explícitos y derivados del base. `id` fija la identidad de la app:
+        // sin él el navegador la deriva de `start_url`, y si algún día cambia
+        // la ruta se instalaría como una aplicación distinta.
+        id: base,
+        start_url: base,
+        scope: base,
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#0A0A0A',
@@ -57,8 +61,18 @@ export default defineConfig({
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true
       },
+      // El service worker se registra también en desarrollo para poder probar
+      // la instalación en localhost sin desplegar.
+      //
+      // Sin `navigateFallback` a propósito: con él, el HTML se servía desde la
+      // caché y los cambios en index.html no aparecían hasta borrar el service
+      // worker a mano. Así la navegación siempre va a la red y el desarrollo
+      // se comporta como sin caché; el offline real se prueba con
+      // `npm run build && npm run preview`.
       devOptions: {
-        enabled: false
+        enabled: true,
+        type: 'module',
+        suppressWarnings: true
       }
     })
   ]

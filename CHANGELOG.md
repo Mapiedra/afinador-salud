@@ -4,6 +4,45 @@ Historial de cambios del Afinador Banda La Salud.
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.2.0] — 2026-08-05
+
+### Añadido
+
+- **Botón para instalar la app**, junto al de ajustes en la cabecera. Aparece
+  salvo que ya esté instalada o que el navegador no sepa instalar aplicaciones
+  web, y nunca es un callejón sin salida: si hay diálogo nativo disponible lo
+  lanza, y si no —iPhone, o Chrome que aún no lo ha ofrecido— explica el gesto
+  manual con los pasos del navegador correspondiente.
+- **El evento `beforeinstallprompt` se captura desde el `<head>`**, antes que
+  el resto del JavaScript. Chrome lo dispara una sola vez y muy pronto, así que
+  hasta ahora se perdía: sin nadie que lo recogiera, la única vía era la
+  barrita del propio navegador, que Chrome deja de mostrar durante meses en
+  cuanto el usuario la descarta una vez. Esa es la explicación más probable de
+  que la opción de instalar hubiera desaparecido.
+- **Diagnóstico de instalación en Ajustes**, con botón de copiar: contexto
+  seguro, soporte del evento, si llegó y a los cuántos milisegundos, si corre
+  en modo app y si el service worker controla la página.
+
+### Cambiado
+
+- **El manifest declara `id` explícito** y `start_url` y `scope` absolutos, los
+  tres derivados de la ruta base. Sin `id`, el navegador deriva la identidad de
+  la app de `start_url`: si algún día cambiara la ruta, se instalaría como una
+  aplicación distinta.
+- **El service worker se registra también en desarrollo**, para poder probar la
+  instalación en `localhost` sin desplegar. Sin `navigateFallback` a propósito:
+  con él, el HTML se servía desde la caché y los cambios en `index.html` no
+  aparecían hasta borrar el service worker a mano.
+
+### Arreglado
+
+- La hoja de ajustes crecía hasta 527 px con el bloque nuevo y en una pantalla
+  baja se salía por arriba, dejando los primeros ajustes fuera de alcance.
+  Ahora se limita al 88 % del alto y se desplaza por dentro.
+- En pantallas de 620 px de alto o menos la tarjeta de consejo se quedaba en
+  49 px y recortaba el texto, con el dibujo reducido a 20×27 px. Ahí se recorta
+  el arco y se muestra solo el titular del consejo, que es la parte accionable.
+
 ## [1.1.0] — 2026-08-04
 
 ### Cambiado

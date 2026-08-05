@@ -19,6 +19,7 @@ import { crearDisplayNota } from './ui/noteDisplay.js'
 import { crearConsejo } from './ui/slideAdvice.js'
 import { crearSelector } from './ui/instrumentPicker.js'
 import { crearAjustes } from './ui/settings.js'
+import { crearInstalacion } from './pwa/instalacion.js'
 
 /** Cada cuanto se analiza una ventana. 25 Hz basta y deja la UI a 60 fps. */
 const PERIODO_ANALISIS_MS = 40
@@ -67,6 +68,62 @@ crearAjustes({
     grupoTolerancia: $('grupo-tolerancia')
   }
 })
+
+// --- Instalacion ----------------------------------------------------------
+
+const btnInstalar = $('btn-instalar')
+const capaInstalar = $('capa-instalar')
+const instalacionEstado = $('instalacion-estado')
+const instalacionTraza = $('instalacion-traza')
+
+const instalacion = crearInstalacion({
+  alCambiar() {
+    pintarInstalacion()
+  }
+})
+
+function pintarInstalacion() {
+  const { estado, explicacion, lineas } = instalacion.diagnostico()
+  btnInstalar.hidden = !instalacion.debeMostrarBoton()
+  app.dataset.instalacion = estado
+  instalacionEstado.textContent = explicacion
+  instalacionTraza.textContent = lineas.join('\n')
+}
+
+btnInstalar.addEventListener('click', async () => {
+  // Con el evento en la mano, diálogo nativo. Si no -iOS, o Chrome que aún no
+  // lo ha ofrecido o ya lo consumió-, explicamos el gesto manual en vez de
+  // dejar el botón sin hacer nada.
+  if (instalacion.estado() === 'disponible') {
+    btnInstalar.disabled = true
+    await instalacion.instalar()
+    btnInstalar.disabled = false
+    pintarInstalacion()
+    return
+  }
+
+  $('pasos-ios').hidden = !instalacion.esIOS
+  $('pasos-navegador').hidden = instalacion.esIOS
+  capaInstalar.hidden = false
+})
+
+$('instalar-cerrar').addEventListener('click', () => {
+  capaInstalar.hidden = true
+})
+
+$('instalacion-copiar').addEventListener('click', () => {
+  navigator.clipboard?.writeText(instalacionTraza.textContent).then(
+    () => {
+      $('instalacion-copiar').textContent = 'Copiado'
+    },
+    () => {}
+  )
+})
+
+// Chrome puede tardar unos segundos en decidir que la ofrece; refrescamos el
+// estado un par de veces para que el diagnóstico no mienta si se abre pronto.
+pintarInstalacion()
+for (const espera of [1500, 5000]) setTimeout(pintarInstalacion, espera)
 
 // --- Microfono ------------------------------------------------------------
 

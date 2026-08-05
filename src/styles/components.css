@@ -31,6 +31,43 @@ button {
   color: var(--oro);
 }
 
+/* Instalar: aparece solo cuando se puede, así que conviene que se note. */
+.boton-icono--destacado {
+  color: var(--oro-claro);
+  background: var(--oro-tenue);
+  border-color: var(--oro);
+  animation: respirar 2.6s ease-in-out infinite;
+}
+
+.boton-icono--destacado:disabled {
+  opacity: 0.55;
+  animation: none;
+}
+
+@keyframes respirar {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(240, 180, 41, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(240, 180, 41, 0);
+  }
+}
+
+.pasos {
+  margin: 0 0 18px;
+  padding-left: 20px;
+  text-align: left;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  color: var(--texto-suave);
+}
+
+.pasos strong {
+  color: var(--oro-claro);
+  font-weight: 650;
+}
+
 .boton-primario {
   width: 100%;
   padding: 14px;
@@ -564,6 +601,12 @@ button {
   position: absolute;
   inset: auto 0 0;
   max-width: 520px;
+  /* Con el bloque de instalación la hoja pasa de 527 px: en una pantalla
+     baja se saldría por arriba y los primeros ajustes quedarían fuera de
+     alcance. Se limita y se desplaza por dentro. */
+  max-height: 88dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   margin-inline: auto;
   padding: 10px 20px calc(22px + env(safe-area-inset-bottom));
   border-radius: var(--radio-l) var(--radio-l) 0 0;
@@ -655,4 +698,34 @@ button {
   color: var(--oro-claro);
   background: var(--oro-tenue);
   border-color: var(--oro);
+}
+
+/* ---------- Pantallas muy bajas ---------- */
+
+/* iPhone SE y similares, de 620 px de alto o menos. Ahí la tarjeta de consejo
+   se queda en menos de 50 px y no caben ni el texto ni el dibujo.
+   Estas reglas van al final del fichero a propósito: tienen la misma
+   especificidad que las base, así que solo ganan si vienen después.
+
+   Se recorta el arco para liberar altura y queda solo el titular del consejo,
+   que es la parte accionable: hacia dónde mover la pieza. El matiz de cuánto
+   y el dibujo se sacrifican, porque a ese tamaño el dibujo quedaba en 20×27 px
+   y no comunicaba nada. */
+@media (max-height: 620px) {
+  .medidor__arco {
+    max-width: min(100%, 32vh);
+  }
+
+  .consejo {
+    justify-content: center;
+  }
+
+  .consejo__dibujo,
+  .consejo__detalle {
+    display: none;
+  }
+
+  .consejo__texto {
+    text-align: center;
+  }
 }
