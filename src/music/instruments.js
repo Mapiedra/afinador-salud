@@ -43,7 +43,7 @@ export const INSTRUMENTOS = [
     id: 'trompeta',
     nombre: 'Trompeta',
     abrev: 'Tpt',
-    lecturas: ['sib', 'do'],
+    lecturas: ['do', 'sib'],
     rango: { minHz: 150, maxHz: 1200 },
     orientacion: 'horizontal',
     pieza: 'la bomba general',
@@ -53,8 +53,7 @@ export const INSTRUMENTOS = [
     id: 'trombon',
     nombre: 'Trombón',
     abrev: 'Tbn',
-    // El trombon de la banda se lee solo en Do.
-    lecturas: ['do'],
+    lecturas: ['do', 'sib'],
     rango: { minHz: 60, maxHz: 600 },
     orientacion: 'horizontal',
     pieza: 'la bomba general',

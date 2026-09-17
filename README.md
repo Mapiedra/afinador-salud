@@ -10,7 +10,8 @@ en tiempo de ejecución.
 ## Qué hace
 
 - Detecta la nota tocada por el micrófono y la muestra en las lecturas del
-  instrumento seleccionado: **Do y Si♭** en todos, y **solo Fa** en la trompa.
+  instrumento seleccionado: **Do y Si♭** en casi todos, **solo Do** en la
+  corneta y **solo Fa** en la trompa.
   No hay selector de tonalidad; lo decide el instrumento.
 - Muestra la desviación en **cents** y en **Hz** respecto a la nota ideal, con
   un margen de afinación de **±10 cents** por defecto (configurable a ±5 o ±15).

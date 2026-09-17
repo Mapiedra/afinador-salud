@@ -4,6 +4,20 @@ Historial de cambios del Afinador Banda La Salud.
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.3.0] — 2026-09-17
+
+### Añadido
+
+- **El trombón también se lee en Si♭**. Pasa de una sola lectura a las dos,
+  como el bombardino y la tuba: en la banda hay papeles de trombón escritos en
+  las dos tonalidades y con una única lectura había que transportar de cabeza.
+
+### Cambiado
+
+- **La trompeta muestra primero Do y después Si♭**, al revés que hasta ahora.
+  Así los cinco instrumentos con doble lectura ponen el Do a la izquierda y no
+  hay que fijarse en el rótulo para saber cuál se está mirando.
+
 ## [1.2.0] — 2026-08-05
 
 ### Añadido

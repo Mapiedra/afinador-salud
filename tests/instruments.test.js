@@ -13,14 +13,14 @@ test('estan los seis instrumentos de metal de la banda', () => {
   assert.deepEqual(ids, ['corneta', 'trompeta', 'trombon', 'bombardino', 'trompa', 'tuba'])
 })
 
-test('corneta, trombón y trompa llevan lectura única; el resto Do y Si♭', () => {
+test('corneta y trompa llevan lectura única; el resto Do y Si♭', () => {
   const lecturas = Object.fromEntries(INSTRUMENTOS.map((i) => [i.id, i.lecturas]))
 
   assert.deepEqual(lecturas.trompa, ['fa'])
-  // Corneta y trombon se leen solo en Do.
+  // La corneta espanola de llaves se lee solo en Do.
   assert.deepEqual(lecturas.corneta, ['do'])
-  assert.deepEqual(lecturas.trombon, ['do'])
-  assert.deepEqual(lecturas.trompeta, ['sib', 'do'])
+  assert.deepEqual(lecturas.trombon, ['do', 'sib'])
+  assert.deepEqual(lecturas.trompeta, ['do', 'sib'])
   assert.deepEqual(lecturas.bombardino, ['do', 'sib'])
   assert.deepEqual(lecturas.tuba, ['do', 'sib'])
 })
