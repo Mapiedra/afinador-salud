@@ -1,4 +1,4 @@
-name: Desplegar en GitHub Pages
+name: Desplegar en OVH
 
 on:
   push:
@@ -7,16 +7,14 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Un despliegue a la vez; no cancelamos el que esté en curso.
 concurrency:
-  group: pages
+  group: ovh
   cancel-in-progress: false
 
 jobs:
-  construir:
+  desplegar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -34,24 +32,19 @@ jobs:
       - name: Iconos
         run: npm run icons
 
+      # afinador.bandasaludcordoba.es sirve la carpeta `afinador` en su raíz,
+      # así que el base es `/` (el valor por defecto de vite.config.js).
       - name: Build
         run: npm run build
 
-      # Requiere que Pages este activado a mano una sola vez:
-      # Settings -> Pages -> Source: GitHub Actions.
-      # (El parametro `enablement` no sirve aqui: exige un PAT, no vale GITHUB_TOKEN.)
-      - uses: actions/configure-pages@v6
-
-      - uses: actions/upload-pages-artifact@v5
+      # Secrets necesarios (Settings -> Secrets and variables -> Actions):
+      # FTP_SERVER (ftp.clusterXXX.hosting.ovh.net), FTP_USER y FTP_PASSWORD.
+      - name: Subir a OVH por FTPS
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          path: dist
-
-  desplegar:
-    needs: construir
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.despliegue.outputs.page_url }}
-    steps:
-      - id: despliegue
-        uses: actions/deploy-pages@v5
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: dist/
+          server-dir: afinador/

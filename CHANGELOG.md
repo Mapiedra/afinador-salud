@@ -4,6 +4,16 @@ Historial de cambios del Afinador Banda La Salud.
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.4.0] — 2026-10-04
+
+### Cambiado
+
+- **La app se publica en `afinador.bandasaludcordoba.es`**, en el hosting de OVH,
+  por FTPS desde GitHub Actions. Deja de desplegarse en GitHub Pages y el `base`
+  pasa de `/afinador-salud/` a `/`. Quien tenga instalada la versión de
+  `github.io` tendrá que instalar de nuevo la app desde la nueva dirección.
+- El título de la pestaña es ahora «Afinador | Salud de Córdoba».
+
 ## [1.3.0] — 2026-09-17
 
 ### Añadido

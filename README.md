@@ -32,8 +32,7 @@ npm install
 npm run dev
 ```
 
-El servidor abre en `http://localhost:5173/afinador-salud/` (Vite redirige
-solo desde la raíz). El micrófono necesita `localhost` o HTTPS: desde el móvil
+El servidor abre en `http://localhost:5173/`. El micrófono necesita `localhost` o HTTPS: desde el móvil
 por IP de red local **no funcionará** sin un túnel HTTPS.
 
 ```bash
@@ -67,21 +66,22 @@ fichero y volver a ejecutarlo.
 
 ## Despliegue
 
-> **Antes del primer despliegue, una sola vez:** en el repositorio, **Settings →
-> Pages → Build and deployment → Source: `GitHub Actions`**.
->
-> Sin ese paso el workflow falla en `configure-pages` con
-> `Get Pages site failed … Error: Not Found`. No se puede automatizar: el
-> parámetro `enablement` de la action exige un token personal (PAT), y el
-> `GITHUB_TOKEN` del workflow no basta. Después de activarlo, relanzar el
-> workflow fallido con **Re-run jobs**.
+Cada push a `main` ejecuta `.github/workflows/deploy.yml`, que pasa los tests,
+construye la app y sube `dist/` por FTPS a la carpeta `afinador` del hosting de
+OVH. Se publica en:
 
-Hecho eso, cada push a `main` publica vía `.github/workflows/deploy.yml` en:
+    https://afinador.bandasaludcordoba.es/
 
-    https://mapiedra.github.io/afinador-salud/
+**Configuración, una sola vez:**
 
-El `base` de Vite está fijado a `/afinador-salud/`. Para desplegar en otra ruta
-o en un dominio propio, sobreescribir con la variable de entorno `BASE_PATH`.
+1. En OVH, el subdominio `afinador` debe apuntar a la carpeta `afinador` del
+   hosting (Multisitio) y tener el certificado SSL activo: sin HTTPS no
+   funcionan ni el micrófono ni el service worker.
+2. En GitHub, **Settings → Secrets and variables → Actions**, crear
+   `FTP_SERVER` (`ftp.clusterXXX.hosting.ovh.net`), `FTP_USER` y `FTP_PASSWORD`.
+
+El `base` de Vite es `/`. Para servir la app desde una subcarpeta, sobreescribir
+con la variable de entorno `BASE_PATH` (por ejemplo `BASE_PATH=/afinador/`).
 
 ## Cómo funciona la detección
 

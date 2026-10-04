@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -6,9 +6,49 @@ import { VitePWA } from 'vite-plugin-pwa'
 // mantener sincronizados a mano.
 const paquete = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'))
 
-// Base path de GitHub Pages: https://mapiedra.github.io/afinador-salud/
-// Se puede sobreescribir con BASE_PATH=/ para probar en otro hosting o en local.
-const base = process.env.BASE_PATH ?? '/afinador-salud/'
+/**
+ * Ancho y alto de un PNG leyendo su cabecera IHDR, que está siempre en los
+ * bytes 16 a 23. Evita depender de sharp aquí, que obligaría a que toda la
+ * configuración fuese asíncrona.
+ */
+function medirPNG(ruta) {
+  const cabecera = readFileSync(ruta).subarray(0, 24)
+  if (cabecera.length < 24 || cabecera.toString('ascii', 12, 16) !== 'IHDR') return null
+  return { ancho: cabecera.readUInt32BE(16), alto: cabecera.readUInt32BE(20) }
+}
+
+/**
+ * Capturas para el manifest. Con ellas Android muestra el diálogo de
+ * instalación completo -nombre, descripción e imágenes- en lugar de la barra
+ * mínima. Se recogen solas de public/screenshots: basta con dejar ahí los PNG,
+ * numerados para fijar el orden en que se ven.
+ */
+function capturas() {
+  const carpeta = new URL('./public/screenshots/', import.meta.url)
+  if (!existsSync(carpeta)) return []
+
+  return readdirSync(carpeta)
+    .filter((f) => f.toLowerCase().endsWith('.png'))
+    .sort()
+    .map((fichero) => {
+      const medida = medirPNG(new URL(fichero, carpeta))
+      if (!medida) return null
+      return {
+        src: `screenshots/${fichero}`,
+        sizes: `${medida.ancho}x${medida.alto}`,
+        type: 'image/png',
+        // 'narrow' es el formato de móvil: es el que mira Chrome en Android.
+        form_factor: medida.ancho <= medida.alto ? 'narrow' : 'wide'
+      }
+    })
+    .filter(Boolean)
+}
+
+const CAPTURAS = capturas()
+
+// Base path: la app vive en la raíz de afinador.bandasaludcordoba.es.
+// Se puede sobreescribir con BASE_PATH=/ruta/ para servirla desde una subcarpeta.
+const base = process.env.BASE_PATH ?? '/'
 
 export default defineConfig({
   base,
@@ -43,6 +83,8 @@ export default defineConfig({
         background_color: '#0A0A0A',
         theme_color: '#0A0A0A',
         categories: ['music', 'education', 'utilities'],
+        // Solo se declara si hay capturas: un array vacío no aporta nada.
+        ...(CAPTURAS.length ? { screenshots: CAPTURAS } : {}),
         icons: [
           { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
@@ -58,6 +100,9 @@ export default defineConfig({
         // La app no hace ninguna peticion de red en runtime, asi que el precache
         // completo ES el modo offline. No hacen falta estrategias adicionales.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2,webmanifest}'],
+        // Las capturas solo las usa el diálogo de instalación, que siempre
+        // ocurre con red. Precacharlas engordaría la app sin aportar nada.
+        globIgnores: ['screenshots/**'],
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true
       },
