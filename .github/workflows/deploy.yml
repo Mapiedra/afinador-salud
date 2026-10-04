@@ -39,12 +39,19 @@ jobs:
 
       # Secrets necesarios (Settings -> Secrets and variables -> Actions):
       # FTP_SERVER (ftp.clusterXXX.hosting.ovh.net), FTP_USER y FTP_PASSWORD.
-      - name: Subir a OVH por FTPS
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          local-dir: dist/
-          server-dir: afinador/
+      # El hosting compartido de OVH no da shell, así que no vale rsync: se
+      # sube por SFTP (puerto 22) con lftp. La ruta es relativa al home del
+      # usuario FTP. Se conserva .htaccess por si se añade a mano en el servidor.
+      - name: Subir a OVH por SFTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          sudo apt-get install -y --no-install-recommends lftp
+          lftp -u "$FTP_USER","$FTP_PASSWORD" "sftp://$FTP_SERVER" -e "
+            set sftp:auto-confirm yes
+            set net:max-retries 2
+            mirror --reverse --delete --parallel=4 --verbose --exclude-glob .htaccess dist/ afinador/
+            bye
+          "

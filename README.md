@@ -67,7 +67,7 @@ fichero y volver a ejecutarlo.
 ## Despliegue
 
 Cada push a `main` ejecuta `.github/workflows/deploy.yml`, que pasa los tests,
-construye la app y sube `dist/` por FTPS a la carpeta `afinador` del hosting de
+construye la app y sube `dist/` por SFTP a la carpeta `afinador` del hosting de
 OVH. Se publica en:
 
     https://afinador.bandasaludcordoba.es/
