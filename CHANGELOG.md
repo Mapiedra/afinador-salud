@@ -4,6 +4,17 @@ Historial de cambios del Afinador Banda La Salud.
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.5.1] — 2026-10-12
+
+### Corregido
+
+- **El afinador dejaba de oír si otra aplicación usaba el micrófono** y seguía
+  marcando «Escuchando». Ahora vigila la señal: si solo llegan ceros, que un
+  micrófono real nunca da, intenta recuperarlo solo, primero reanudando el
+  audio y después pidiendo el micrófono de nuevo. Si no lo consigue, avisa con
+  «Micrófono desactivado» y un botón «Volver a activar», y sigue probando por
+  si la otra aplicación lo suelta.
+
 ## [1.5.0] — 2026-10-12
 
 ### Añadido

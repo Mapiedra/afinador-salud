@@ -151,6 +151,12 @@ const MENSAJES_CAPA = {
     texto: 'Este navegador no permite capturar audio. Prueba con Chrome, Safari o Firefox actualizados.',
     boton: 'Reintentar'
   },
+  interrumpido: {
+    titulo: 'Micrófono desactivado',
+    texto:
+      'Otra aplicación ha usado el micrófono y el afinador ha dejado de oír. Toca para volver a activarlo; si sigue sin oír, cierra la otra aplicación.',
+    boton: 'Volver a activar'
+  },
   error: {
     titulo: 'No se pudo abrir el micrófono',
     texto: 'Comprueba que ninguna otra aplicación lo esté usando y vuelve a intentarlo.',
@@ -162,6 +168,7 @@ const ETIQUETAS_ESTADO = {
   iniciando: 'Iniciando…',
   escuchando: 'Escuchando',
   silenciado: 'Silenciado',
+  interrumpido: 'Sin señal',
   gesto: 'Toca para activar',
   denegado: 'Sin permiso',
   'sin-soporte': 'No compatible',

@@ -486,6 +486,7 @@ button {
   animation: latido 2s ease-in-out infinite;
 }
 
+#app[data-microfono='interrumpido'] .estado-micro__punto,
 #app[data-microfono='denegado'] .estado-micro__punto,
 #app[data-microfono='error'] .estado-micro__punto,
 #app[data-microfono='sin-soporte'] .estado-micro__punto {
