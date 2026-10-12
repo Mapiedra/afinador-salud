@@ -10,8 +10,62 @@
     <meta name="color-scheme" content="dark" />
     <meta
       name="description"
-      content="Afinador para instrumentos de viento metal de la Banda La Salud. Funciona sin conexión."
+      content="Afinador gratuito para corneta, trompeta, trombón, bombardino, trompa y tuba: te dice si meter o sacar la bomba general. Lectura en Do y en Si♭, sin conexión y sin registro."
     />
+    <link rel="canonical" href="https://afinador.bandasaludcordoba.es/" />
+
+    <!-- Vista previa al compartir (WhatsApp, redes). La imagen es la misma que
+         la de la ficha en la web; las URL van absolutas porque los rastreadores
+         no resuelven rutas relativas. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="La Salud de Córdoba" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:url" content="https://afinador.bandasaludcordoba.es/" />
+    <meta property="og:title" content="Afinador online para corneta, trompeta y viento metal" />
+    <meta
+      property="og:description"
+      content="Toca una nota y te dice si meter o sacar la bomba general. Lectura en Do y en Si♭, sin conexión y sin registro."
+    />
+    <meta property="og:image" content="https://afinador.bandasaludcordoba.es/og/afinador.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Afinador para cornetas y viento metal · La Salud de Córdoba" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@bandasaludcord" />
+
+    <!-- Datos estructurados. El `@id` de la banda es el mismo que emite la web,
+         para que Google entienda que la autora es la misma entidad. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Afinador · La Salud de Córdoba",
+        "url": "https://afinador.bandasaludcordoba.es/",
+        "description": "Afinador gratuito para corneta, trompeta, trombón, bombardino, trompa y tuba: te dice si meter o sacar la bomba general. Lectura en Do y en Si♭, sin conexión y sin registro.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Cualquiera con navegador web",
+        "inLanguage": "es",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+        "featureList": [
+          "Meter o sacar la bomba",
+          "En Do y en Si♭ a la vez",
+          "Seis instrumentos",
+          "La 440, o el que uséis",
+          "Sin conexión",
+          "Privado"
+        ],
+        "image": "https://afinador.bandasaludcordoba.es/og/afinador.jpg",
+        "screenshot": "https://afinador.bandasaludcordoba.es/screenshots/01-afinando.png",
+        "mainEntityOfPage": "https://bandasaludcordoba.es/herramientas/afinador/",
+        "author": {
+          "@type": "MusicGroup",
+          "@id": "https://bandasaludcordoba.es/#banda",
+          "name": "Banda de Cornetas y Tambores Ntra. Sra. de la Salud",
+          "url": "https://bandasaludcordoba.es/"
+        }
+      }
+    </script>
 
     <!-- iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -21,7 +75,7 @@
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
     <link rel="icon" type="image/png" href="icons/icon-192.png" />
 
-    <title>Afinador | Salud de Córdoba</title>
+    <title>Afinador online para corneta, trompeta y viento metal · La Salud de Córdoba</title>
 
     <script>
       // Se captura aqui, antes que el resto del JS: Chrome dispara
@@ -167,6 +221,15 @@
       <footer class="pie">
         <span id="pie-version" class="pie__version"></span>
         <span class="pie__autor">Miguel A. Piedra</span>
+        <!-- Un enlace no es una petición: no se hace nada hasta que se toca.
+             En pestaña nueva para que la app instalada no salga de sí misma. -->
+        <a
+          class="pie__banda"
+          href="https://bandasaludcordoba.es/herramientas/afinador/"
+          target="_blank"
+          rel="noopener"
+          >Una herramienta de la Banda de la Salud de Córdoba</a
+        >
       </footer>
 
       <!-- Salvaguarda: solo aparece si el navegador exige un gesto o deniega el micro -->

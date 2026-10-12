@@ -131,3 +131,31 @@ body {
   content: '·';
   margin-right: 8px;
 }
+
+/* La firma de la banda baja a su propia línea en móviles estrechos. */
+.pie {
+  flex-wrap: wrap;
+  row-gap: 2px;
+}
+
+.pie__banda {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--linea);
+  text-underline-offset: 2px;
+}
+
+.pie__banda:hover,
+.pie__banda:focus-visible {
+  color: var(--texto);
+  text-decoration-color: currentColor;
+}
+
+@media (min-width: 420px) {
+  .pie__banda::before {
+    content: '·';
+    margin-right: 8px;
+    display: inline-block;
+    text-decoration: none;
+  }
+}

@@ -4,6 +4,30 @@ Historial de cambios del Afinador Banda La Salud.
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 
+## [1.5.0] — 2026-10-12
+
+### Añadido
+
+- **Vista previa al compartir**: etiquetas Open Graph y tarjeta de Twitter con
+  la misma imagen de 1200×630 que la ficha de la web.
+- **Datos para buscadores**: URL canónica, `robots.txt`, `sitemap.xml` y datos
+  estructurados `WebApplication` con la banda como autora, enlazados a la ficha
+  de la web.
+- **Firma en el pie**: «Una herramienta de la Banda de la Salud de Córdoba»,
+  que lleva a la ficha del afinador en la web.
+- **Captura en el manifest**, para que Android muestre el diálogo de
+  instalación completo.
+
+### Cambiado
+
+- El título y la descripción usan lo que se busca: «Afinador online para
+  corneta, trompeta y viento metal», la bomba general y la lectura en Do y Si♭.
+  Son los mismos textos que la ficha de la web.
+
+Nada de esto se descarga en tiempo de ejecución: la imagen social, la captura,
+`robots.txt` y `sitemap.xml` quedan fuera del precache y la app sigue sin hacer
+peticiones de red.
+
 ## [1.4.0] — 2026-10-04
 
 ### Cambiado

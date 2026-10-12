@@ -69,7 +69,7 @@ export default defineConfig({
         name: 'Afinador Banda La Salud',
         short_name: 'Afinador',
         description:
-          'Afinador para instrumentos de viento metal: corneta, trompeta, trombón, bombardino, trompa y tuba. Funciona sin conexión.',
+          'Afinador gratuito para corneta, trompeta, trombón, bombardino, trompa y tuba: te dice si meter o sacar la bomba general. Lectura en Do y en Si♭, sin conexión y sin registro.',
         lang: 'es',
         dir: 'ltr',
         // Explícitos y derivados del base. `id` fija la identidad de la app:
